@@ -1,13 +1,19 @@
 import logging
+import os
 from flask import jsonify, render_template, request
 from werkzeug.exceptions import HTTPException
+
+# Crear directorio de logs si no existe
+log_dir = 'logs'
+if not os.path.exists(log_dir):
+    os.makedirs(log_dir)
 
 # Configurar logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('logs/doctec.log'),
+        logging.FileHandler(os.path.join(log_dir, 'doctec.log')),
         logging.StreamHandler()
     ]
 )

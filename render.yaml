@@ -6,7 +6,7 @@ services:
     buildCommand: |
       pip install -r requirements.txt
       python init_db.py
-    startCommand: gunicorn app_production:app --config gunicorn_config.py
+    startCommand: gunicorn app_production:app
     envVars:
       - key: FLASK_ENV
         value: production
