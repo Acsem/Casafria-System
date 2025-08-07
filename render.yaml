@@ -2,6 +2,7 @@ services:
   - type: web
     name: ecuafrim-app
     env: python
+    pythonVersion: 3.9.18
     buildCommand: |
       pip install -r requirements.txt
       python init_db.py
