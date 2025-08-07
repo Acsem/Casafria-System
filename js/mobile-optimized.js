@@ -55,21 +55,32 @@ function optimizeSidebar() {
                 background: rgba(0,0,0,0.5);
                 z-index: 1999;
                 display: none;
+                transition: opacity 0.3s ease;
             `;
             document.body.appendChild(overlay);
         }
         
+        // Remover event listeners existentes para evitar duplicados
+        const newSidebarToggle = sidebarToggle.cloneNode(true);
+        sidebarToggle.parentNode.replaceChild(newSidebarToggle, sidebarToggle);
+        
         // Event listeners para sidebar móvil
-        if (sidebarToggle) {
-            sidebarToggle.addEventListener('click', () => {
+        if (newSidebarToggle) {
+            newSidebarToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 sidebar.classList.toggle('expanded');
                 overlay.style.display = sidebar.classList.contains('expanded') ? 'block' : 'none';
             });
         }
         
-        overlay.addEventListener('click', () => {
+        // Remover event listeners existentes del overlay
+        const newOverlay = overlay.cloneNode(true);
+        overlay.parentNode.replaceChild(newOverlay, overlay);
+        
+        newOverlay.addEventListener('click', () => {
             sidebar.classList.remove('expanded');
-            overlay.style.display = 'none';
+            newOverlay.style.display = 'none';
         });
         
     } else {
@@ -93,27 +104,13 @@ function optimizeTables() {
     
     tables.forEach(table => {
         if (deviceType === 'mobile') {
-            // Agregar indicador de scroll horizontal
-            if (!table.querySelector('.scroll-indicator')) {
-                const indicator = document.createElement('div');
-                indicator.className = 'scroll-indicator';
-                indicator.innerHTML = '<i class="fas fa-arrows-alt-h"></i> Desliza para ver más columnas';
-                indicator.style.cssText = `
-                    text-align: center;
-                    padding: 0.8rem;
-                    background: linear-gradient(135deg, var(--accent-color), var(--accent-light));
-                    color: white;
-                    font-size: 0.8rem;
-                    border-radius: 8px;
-                    margin-bottom: 0.8rem;
-                    font-weight: 500;
-                `;
-                table.parentNode.insertBefore(indicator, table);
-            }
-            
-            // Agregar scroll suave
+            // Solo agregar scroll suave sin indicadores
             table.style.scrollBehavior = 'smooth';
             table.style.webkitOverflowScrolling = 'touch';
+            
+            // Remover cualquier indicador existente
+            const existingIndicators = table.parentNode.querySelectorAll('.scroll-indicator');
+            existingIndicators.forEach(indicator => indicator.remove());
         } else {
             // Remover indicador en pantallas grandes
             const indicator = table.parentNode.querySelector('.scroll-indicator');
