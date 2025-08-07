@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Orden - Ecuafrim</title>
+    <link rel="icon" type="image/png" href="images/ecuafrim-logo.png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="orders.html" class="nav-link"><i class="fas fa-arrow-left"></i> Volver a Órdenes</a>
+        <span class="nav-title">Detalle de Orden</span>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h2><i class="fas fa-clipboard-check"></i> Orden #<span id="orderNumberDisplay"></span></h2>
+            <div class="header-actions">
+                <button onclick="editOrder()" class="btn-primary">
+                    <i class="fas fa-edit"></i> Editar Orden
+                </button>
+                <button onclick="addNote()" class="btn-secondary">
+                    <i class="fas fa-comment-alt"></i> Agregar Nota
+                </button>
+            </div>
+        </div>
+
+        <!-- Estado de la Orden -->
+        <div class="order-status-section">
+            <h3><i class="fas fa-flag"></i> Estado de la Orden</h3>
+            <div class="status-selector">
+                <div class="status-dropdown" id="statusDropdown" style="display: none;">
+                    <label for="statusSelect">Cambiar estado:</label>
+                    <select id="statusSelect" onchange="changeOrderStatus(this.value)">
+                        <option value="ingresada">Ingresada</option>
+                        <option value="planificada">Planificada</option>
+                        <option value="pendiente">Pendiente</option>
+                        <option value="anulada">Anulada</option>
+                        <option value="completada">Completada</option>
+                    </select>
+                </div>
+                <div class="current-status">
+                    <span>Estado actual: </span>
+                    <span id="currentStatusDisplay" class="status-badge">Ingresada</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información Principal de la Orden -->
+        <div class="order-detail-card">
+            <div class="order-info-grid">
+                <div class="info-section">
+                    <h3><i class="fas fa-user"></i> Información del Cliente</h3>
+                    <div class="info-item">
+                        <label>Nombre:</label>
+                        <span id="clientNameDisplay"></span>
+                    </div>
+                    <div class="info-item">
+                        <label>Cédula:</label>
+                        <span id="clientDocumentDisplay"></span>
+                    </div>
+                    <div class="info-item">
+                        <label>Teléfono:</label>
+                        <span id="clientPhoneDisplay"></span>
+                    </div>
+                    <div class="info-item">
+                        <label>Ciudad:</label>
+                        <span id="clientCityDisplay"></span>
+                    </div>
+                    <div class="info-item">
+                        <label>Dirección:</label>
+                        <span id="clientAddressDisplay"></span>
+                    </div>
+                    <div class="info-item">
+                        <label>Referencia:</label>
+                        <span id="clientReferenceDisplay"></span>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h3><i class="fas fa-tools"></i> Información del Producto</h3>
+                    <div class="info-item">
+                        <label>Producto:</label>
+                        <span id="productDisplay"></span>
+                    </div>
+                    <div class="info-item">
+                        <label>Marca:</label>
+                        <span id="brandDisplay"></span>
+                    </div>
+                    <div class="info-item">
+                        <label>Serie:</label>
+                        <span id="seriesDisplay"></span>
+                    </div>
+                    <div class="info-item">
+                        <label>Cadena:</label>
+                        <span id="warehouseDisplay"></span>
+                    </div>
+                    <div class="info-item">
+                        <label>Fecha de Compra:</label>
+                        <span id="purchaseDateDisplay"></span>
+                    </div>
+                    <div class="info-item">
+                        <label>Estado de Garantía:</label>
+                        <span id="warrantyStatusDisplay"></span>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Daño Reportado</h3>
+                    <div class="info-item">
+                        <label>Descripción:</label>
+                        <span id="damageDisplay"></span>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h3><i class="fas fa-tachometer-alt"></i> Información de Kilometraje y Valor</h3>
+                    <div class="info-item">
+                        <label>Kilometraje:</label>
+                        <span id="kilometerDisplay">No registrado</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Valor Estimado:</label>
+                        <span id="estimatedValueDisplay">No registrado</span>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h3><i class="fas fa-bell"></i> Recordatorios</h3>
+                    <div class="info-item">
+                        <label>Próximo Recordatorio:</label>
+                        <span id="nextReminderDisplay">No hay recordatorios</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Estado:</label>
+                        <span id="reminderStatusDisplay">Sin recordatorios</span>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h3><i class="fas fa-calendar"></i> Información de Fecha</h3>
+                    <div class="info-item">
+                        <label>Fecha de Registro:</label>
+                        <span id="dateDisplay"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario de Edición (Oculto por defecto) -->
+        <div id="editFormContainer" class="edit-form-container" style="display: none;">
+            <div class="edit-form-header">
+                <h3><i class="fas fa-edit"></i> Editar Orden</h3>
+                <button onclick="cancelEdit()" class="btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+            </div>
+            <form id="editOrderForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>N° Orden</label>
+                        <input type="text" id="editOrderNumber" required readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha de Registro</label>
+                        <input type="date" id="editDate" required>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h4><i class="fas fa-user"></i> Información del Cliente</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nombre del Cliente</label>
+                            <input type="text" id="editClientName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Cédula</label>
+                            <input type="text" id="editClientDocument" placeholder="Ej: 1234567890">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Teléfono</label>
+                            <input type="tel" id="editClientPhone" placeholder="Ej: 0991234567">
+                        </div>
+                        <div class="form-group">
+                            <label>Ciudad</label>
+                            <input type="text" id="editClientCity" placeholder="Ej: Guayaquil">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Dirección</label>
+                            <input type="text" id="editClientAddress" placeholder="Ej: Av. Principal 123">
+                        </div>
+                        <div class="form-group">
+                            <label>Referencia</label>
+                            <input type="text" id="editClientReference" placeholder="Ej: Frente al parque, casa azul">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h4><i class="fas fa-tools"></i> Información del Producto</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Producto</label>
+                            <input type="text" id="editProduct" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Marca</label>
+                            <input type="text" id="editBrand" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Serie</label>
+                            <input type="text" id="editSeries" placeholder="Número de serie del producto">
+                        </div>
+                        <div class="form-group">
+                            <label>Cadena</label>
+                            <input type="text" id="editWarehouse" placeholder="Nombre de la cadena">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Fecha de Compra</label>
+                            <input type="date" id="editPurchaseDate">
+                        </div>
+                        <div class="form-group">
+                            <label>Garantía</label>
+                            <select id="editWarrantyStatus">
+                                <option value="">Seleccionar</option>
+                                <option value="Vigente">Vigente</option>
+                                <option value="Vencida">Vencida</option>
+                                <option value="Sin Garantía">Sin Garantía</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción del Daño</label>
+                        <textarea id="editDamage" required placeholder="Describe detalladamente el problema o daño del producto..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h4><i class="fas fa-tachometer-alt"></i> Información de Kilometraje y Valor</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Kilometraje</label>
+                            <input type="number" id="editKilometer" min="0" placeholder="Ej: 50000" step="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Valor Estimado</label>
+                            <div class="payment-input-group">
+                                <span class="currency-symbol">$</span>
+                                <input type="number" id="editEstimatedValue" min="0" step="0.01" placeholder="0.00">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h4><i class="fas fa-bell"></i> Recordatorios</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Fecha del Recordatorio</label>
+                            <input type="date" id="editReminderDate">
+                        </div>
+                        <div class="form-group">
+                            <label>Hora del Recordatorio</label>
+                            <input type="time" id="editReminderTime">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción del Recordatorio</label>
+                        <textarea id="editReminderDescription" placeholder="Describe el recordatorio o tarea pendiente..."></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Estado del Recordatorio</label>
+                            <select id="editReminderStatus">
+                                <option value="">Seleccionar</option>
+                                <option value="pendiente">Pendiente</option>
+                                <option value="en_proceso">En Proceso</option>
+                                <option value="completado">Completado</option>
+                                <option value="cancelado">Cancelado</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Prioridad</label>
+                            <select id="editReminderPriority">
+                                <option value="">Seleccionar</option>
+                                <option value="baja">Baja</option>
+                                <option value="media">Media</option>
+                                <option value="alta">Alta</option>
+                                <option value="urgente">Urgente</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h4><i class="fas fa-dollar-sign"></i> Información de Cobro</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Valor del Servicio</label>
+                            <div class="payment-input-group">
+                                <span class="currency-symbol">$</span>
+                                <input type="number" id="editServiceValue" min="0" step="0.01" placeholder="0.00">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Porcentaje de IVA</label>
+                            <select id="editIvaPercentage">
+                                <option value="0">0%</option>
+                                <option value="15" selected>15%</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Valor del IVA</label>
+                            <div class="payment-input-group">
+                                <span class="currency-symbol">$</span>
+                                <input type="number" id="editIvaValue" min="0" step="0.01" placeholder="0.00" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Estado de Cobro</label>
+                            <select id="editPaymentStatus">
+                                <option value="sin_cobro">Sin Cobro</option>
+                                <option value="pendiente_cobro">Pendiente de Cobro</option>
+                                <option value="cobrada">Cobrada</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Observaciones de Cobro</label>
+                        <textarea id="editPaymentObservations" placeholder="Observaciones sobre el cobro..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i> Guardar Cambios
+                    </button>
+                    <button type="button" onclick="cancelEdit()" class="btn-secondary">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Sección de Cobros -->
+        <div class="order-detail-card">
+            <div class="order-info-grid">
+                <div class="info-section">
+                    <h3><i class="fas fa-dollar-sign"></i> Información de Cobro</h3>
+                    <div class="info-item">
+                        <label>Valor del Servicio:</label>
+                        <span id="serviceValueDisplay">No registrado</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Estado de Cobro:</label>
+                        <span id="paymentStatusDisplay">Sin cobro</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Observaciones:</label>
+                        <span id="paymentObservationsDisplay">Sin observaciones</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de Notas -->
+        <div class="notes-section">
+            <h3><i class="fas fa-sticky-note"></i> Notas y Comentarios</h3>
+            <div id="notesContainer" class="notes-container">
+                <!-- Las notas se cargarán aquí -->
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Modal Agregar Nota -->
+    <div id="addNoteModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeAddNoteModal()">&times;</span>
+            <h3>Agregar Nota</h3>
+            <form id="addNoteForm">
+                <div class="form-group">
+                    <label>Nota</label>
+                    <textarea id="newNoteText" required placeholder="Escribe aquí tu nota o comentario..."></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Agregar Nota</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/order-detail.js"></script>
+    <script src="js/responsive.js"></script>
+</body>
+</html> 

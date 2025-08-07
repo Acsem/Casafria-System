@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Órdenes de Trabajo - Ecuafrim</title>
+    <link rel="icon" type="image/png" href="images/ecuafrim-logo.png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <button id="sidebarToggle" class="sidebar-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <img src="images/ecuafrim-logo.png" alt="Ecuafrim Logo" class="nav-logo">
+            <span>Ecuafrim</span>
+        </div>
+        <div class="nav-user">
+            <span id="userInfo">
+                <i class="fas fa-user"></i> 
+                <span id="userName">Admin</span>
+            </span>
+            <button onclick="logout()" class="btn-logout">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </button>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar">
+        
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <h4><i class="fas fa-tachometer-alt"></i> Dashboard</h4>
+                <a href="home.html" class="sidebar-link">
+                    <i class="fas fa-home"></i>
+                    <span>Inicio</span>
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <h4><i class="fas fa-tools"></i> Gestión</h4>
+                <a href="orders.html" class="sidebar-link active">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Órdenes de Trabajo</span>
+                </a>
+                <a href="clients.html" class="sidebar-link">
+                    <i class="fas fa-users"></i>
+                    <span>Clientes</span>
+                </a>
+                <a href="payments.html" class="sidebar-link">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span>Cobros</span>
+                </a>
+                <a href="inventory.html" class="sidebar-link">
+                    <i class="fas fa-boxes"></i>
+                    <span>Inventario</span>
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <h4><i class="fas fa-bell"></i> Recordatorios</h4>
+                <a href="reminders.html" class="sidebar-link">
+                    <i class="fas fa-bell"></i>
+                    <span>Recordatorios</span>
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <h4><i class="fas fa-chart-line"></i> Reportes</h4>
+                <a href="reports.html" class="sidebar-link">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reportes</span>
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <h4><i class="fas fa-cog"></i> Configuración</h4>
+                <a href="#" class="sidebar-link" onclick="showUserSettings()">
+                    <i class="fas fa-user-cog"></i>
+                    <span>Perfil de Usuario</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <i class="fas fa-user-circle"></i>
+                <div>
+                    <span id="sidebarUserName">Admin</span>
+                    <small>Usuario Activo</small>
+                </div>
+            </div>
+            <button onclick="logout()" class="sidebar-logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Cerrar Sesión</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Overlay para cerrar sidebar -->
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <div class="container">
+        <div class="page-header">
+            <h2><i class="fas fa-clipboard-list"></i> Órdenes Registradas</h2>
+            <div class="header-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchOrders" placeholder="Buscar orden, cliente, producto...">
+                </div>
+                <button onclick="showAdvancedFilter()" class="btn-secondary">
+                    <i class="fas fa-filter"></i> Filtro Avanzado
+                </button>
+                <button onclick="showNewOrderForm()" class="btn-primary">
+                    <i class="fas fa-plus"></i> Nueva Orden
+                </button>
+                <button onclick="exportToExcel()" class="btn-secondary">
+                    <i class="fas fa-file-excel"></i> Exportar a Excel
+                </button>
+            </div>
+        </div>
+
+        <!-- Contador de Órdenes -->
+        <div class="orders-counter">
+            <div class="counter-info">
+                <i class="fas fa-clipboard-list"></i>
+                <span id="ordersCount">Mostrando 0 de 0 órdenes</span>
+            </div>
+            <div class="counter-actions">
+                <button onclick="clearSearch()" id="clearSearchBtn" class="btn-small" style="display: none;">
+                    <i class="fas fa-times"></i> Limpiar Búsqueda
+                </button>
+            </div>
+        </div>
+
+        <!-- Panel de Filtro Avanzado -->
+        <div id="advancedFilterPanel" class="advanced-filter-panel" style="display: none;">
+            <div class="filter-panel-header">
+                <h3><i class="fas fa-filter"></i> Filtro Avanzado</h3>
+                <button onclick="toggleAdvancedFilter()" class="btn-close-filter">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="advancedFilterForm">
+                <div class="filter-sections">
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label>Fecha Desde</label>
+                            <input type="date" id="filterDateFrom" name="filterDateFrom">
+                        </div>
+                        <div class="filter-group">
+                            <label>Fecha Hasta</label>
+                            <input type="date" id="filterDateTo" name="filterDateTo">
+                        </div>
+                        <div class="filter-group">
+                            <label>Cliente</label>
+                            <input type="text" id="filterClientName" name="filterClientName" placeholder="Nombre...">
+                        </div>
+                        <div class="filter-group">
+                            <label>Ciudad</label>
+                            <input type="text" id="filterClientCity" name="filterClientCity" placeholder="Ciudad...">
+                        </div>
+                    </div>
+                    
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label>Producto</label>
+                            <input type="text" id="filterProduct" name="filterProduct" placeholder="Producto...">
+                        </div>
+                        <div class="filter-group">
+                            <label>Marca</label>
+                            <input type="text" id="filterBrand" name="filterBrand" placeholder="Marca...">
+                        </div>
+                        <div class="filter-group">
+                            <label>Garantía</label>
+                            <select id="filterWarrantyStatus" name="filterWarrantyStatus">
+                                <option value="">Todos</option>
+                                <option value="Vigente">Vigente</option>
+                                <option value="Vencida">Vencida</option>
+                                <option value="Sin Garantía">Sin Garantía</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>N° Orden</label>
+                            <input type="text" id="filterOrderNumber" name="filterOrderNumber" placeholder="Número...">
+                        </div>
+                    </div>
+                    
+                    <div class="filter-row">
+                        <div class="filter-group full-width">
+                            <label>Notas</label>
+                            <input type="text" id="filterNotes" name="filterNotes" placeholder="Buscar en notas...">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-actions">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-search"></i> Aplicar
+                    </button>
+                    <button type="button" onclick="clearAdvancedFilters()" class="btn-secondary">
+                        <i class="fas fa-times"></i> Limpiar
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Resumen de Filtros Avanzados -->
+        <div id="filterSummary" class="filter-summary" style="display: none;">
+            <!-- Se llenará dinámicamente -->
+        </div>
+
+        <div class="table-responsive">
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>N° Orden</th>
+                        <th>Cliente</th>
+                        <th>Producto</th>
+                        <th>Marca</th>
+                        <th>Daño</th>
+                        <th>Fecha</th>
+                        <th><i class="fas fa-flag"></i> Estado</th>
+                        <th><i class="fas fa-sticky-note"></i> Notas</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="ordersBody">
+                    <!-- Las órdenes se cargarán aquí -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal Nueva Orden -->
+    <div id="newOrderModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeNewOrderForm()">&times;</span>
+            <h3>Nueva Orden</h3>
+            <form id="newOrderForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>N° Orden</label>
+                        <input type="text" id="orderNumber" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha de Registro</label>
+                        <input type="date" id="orderDate" required>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h4><i class="fas fa-user"></i> Información del Cliente</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nombre del Cliente</label>
+                            <input type="text" id="clientName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Cédula</label>
+                            <input type="text" id="clientDocument" placeholder="Ej: 1234567890">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Teléfono</label>
+                            <input type="tel" id="clientPhone" placeholder="Ej: 0991234567">
+                        </div>
+                        <div class="form-group">
+                            <label>Ciudad</label>
+                            <input type="text" id="clientCity" placeholder="Ej: Guayaquil">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Dirección</label>
+                            <input type="text" id="clientAddress" placeholder="Ej: Av. Principal 123">
+                        </div>
+                        <div class="form-group">
+                            <label>Referencia</label>
+                            <input type="text" id="clientReference" placeholder="Ej: Frente al parque, casa azul">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h4><i class="fas fa-tools"></i> Información del Producto</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Producto</label>
+                            <input type="text" id="product" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Marca</label>
+                            <input type="text" id="brand" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Fecha de Compra</label>
+                            <input type="date" id="purchaseDate">
+                        </div>
+                        <div class="form-group">
+                            <label>Garantía</label>
+                            <select id="warrantyStatus">
+                                <option value="">Seleccionar</option>
+                                <option value="Vigente">Vigente</option>
+                                <option value="Vencida">Vencida</option>
+                                <option value="Sin Garantía">Sin Garantía</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción del Daño</label>
+                        <textarea id="damage" required placeholder="Describe detalladamente el problema o daño del producto..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i> Guardar Orden
+                    </button>
+                    <button type="button" onclick="closeNewOrderForm()" class="btn-secondary">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Notas -->
+    <div id="noteModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeNoteModal()">&times;</span>
+            <h3>Agregar Nota</h3>
+            <form id="noteForm">
+                <input type="hidden" id="noteOrderId">
+                <div class="form-group">
+                    <label>Nota</label>
+                    <textarea id="noteText" required></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Guardar Nota</button>
+            </form>
+        </div>
+    </div>
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="js/pdf-config.js"></script>
+    <script src="js/orders.js"></script>
+    <script src="js/responsive.js"></script>
+    <script src="js/sidebar.js"></script>
+</body>
+</html> 

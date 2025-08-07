@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recordatorios - Ecuafrim</title>
+    <link rel="icon" type="image/png" href="images/ecuafrim-logo.png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <button id="sidebarToggle" class="sidebar-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <img src="images/ecuafrim-logo.png" alt="Ecuafrim Logo" class="nav-logo">
+            <span>Ecuafrim</span>
+        </div>
+        <div class="nav-user">
+            <span id="userInfo">
+                <i class="fas fa-user"></i> 
+                <span id="userName">Admin</span>
+            </span>
+            <button onclick="logout()" class="btn-logout">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </button>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <h4><i class="fas fa-tachometer-alt"></i> Dashboard</h4>
+                <a href="home.html" class="sidebar-link">
+                    <i class="fas fa-home"></i>
+                    <span>Inicio</span>
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <h4><i class="fas fa-tools"></i> Gestión</h4>
+                <a href="orders.html" class="sidebar-link">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Órdenes de Trabajo</span>
+                </a>
+                <a href="clients.html" class="sidebar-link">
+                    <i class="fas fa-users"></i>
+                    <span>Clientes</span>
+                </a>
+                <a href="payments.html" class="sidebar-link">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span>Cobros</span>
+                </a>
+                <a href="inventory.html" class="sidebar-link">
+                    <i class="fas fa-boxes"></i>
+                    <span>Inventario</span>
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <h4><i class="fas fa-bell"></i> Recordatorios</h4>
+                <a href="reminders.html" class="sidebar-link active">
+                    <i class="fas fa-bell"></i>
+                    <span>Recordatorios</span>
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <h4><i class="fas fa-chart-line"></i> Reportes</h4>
+                <a href="reports.html" class="sidebar-link">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reportes</span>
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <h4><i class="fas fa-cog"></i> Configuración</h4>
+                <a href="#" class="sidebar-link" onclick="showUserSettings()">
+                    <i class="fas fa-user-cog"></i>
+                    <span>Perfil de Usuario</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <i class="fas fa-user-circle"></i>
+                <div>
+                    <span id="sidebarUserName">Admin</span>
+                    <small>Usuario Activo</small>
+                </div>
+            </div>
+            <button onclick="logout()" class="sidebar-logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Cerrar Sesión</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Overlay para cerrar sidebar -->
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <div class="container">
+        <div class="page-header">
+            <h2><i class="fas fa-bell"></i> Gestión de Recordatorios</h2>
+            <div class="header-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchReminders" placeholder="Buscar recordatorios...">
+                </div>
+                <div class="date-filter">
+                    <label for="dateFilter">Filtrar por fecha:</label>
+                    <select id="dateFilter" onchange="applyDateFilter()">
+                        <option value="all">Todos los recordatorios</option>
+                        <option value="30">Últimos 30 días</option>
+                        <option value="15">Últimos 15 días</option>
+                        <option value="7">Últimos 7 días</option>
+                        <option value="3">Últimos 3 días</option>
+                        <option value="today">Hoy</option>
+                    </select>
+                </div>
+                <button onclick="exportRemindersToExcel()" class="btn-secondary">
+                    <i class="fas fa-file-excel"></i> Exportar a Excel
+                </button>
+            </div>
+        </div>
+
+        <!-- Resumen de Recordatorios -->
+        <div class="reminders-summary">
+            <div class="summary-card">
+                <i class="fas fa-bell"></i>
+                <div>
+                    <h4>Total Recordatorios</h4>
+                    <span id="totalReminders">0</span>
+                </div>
+            </div>
+            <div class="summary-card">
+                <i class="fas fa-clock"></i>
+                <div>
+                    <h4>Pendientes</h4>
+                    <span id="pendingReminders">0</span>
+                </div>
+            </div>
+            <div class="summary-card">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    <h4>Urgentes</h4>
+                    <span id="urgentReminders">0</span>
+                </div>
+            </div>
+            <div class="summary-card">
+                <i class="fas fa-calendar-day"></i>
+                <div>
+                    <h4>Hoy</h4>
+                    <span id="todayReminders">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Recordatorios -->
+        <div class="table-responsive">
+            <table id="remindersTable" class="reminders-table">
+                <thead>
+                    <tr>
+                        <th>N° Orden</th>
+                        <th>Cliente</th>
+                        <th>Producto</th>
+                        <th>Recordatorio</th>
+                        <th>Fecha/Hora</th>
+                        <th>Estado</th>
+                        <th>Prioridad</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="remindersTableBody">
+                    <!-- Los recordatorios se cargarán aquí -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Mensaje cuando no hay recordatorios -->
+        <div id="noRemindersMessage" class="no-reminders-message" style="display: none;">
+            <i class="fas fa-bell-slash"></i>
+            <h3>No hay recordatorios activos</h3>
+            <p>No se encontraron recordatorios pendientes en el sistema.</p>
+        </div>
+    </div>
+
+    <script src="js/reminders.js"></script>
+    <script src="js/responsive.js"></script>
+    <script src="js/sidebar.js"></script>
+</body>
+</html> 

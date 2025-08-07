@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registrar Nueva Orden</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Registrar Nueva Orden</h2>
+        <form method="POST" action="/new_order">
+            <div class="form-group">
+                <label>Nombre del Cliente:</label>
+                <input type="text" name="client_name" required>
+            </div>
+            <div class="form-group">
+                <label>Producto:</label>
+                <input type="text" name="product" required>
+            </div>
+            <div class="form-group">
+                <label>Marca:</label>
+                <input type="text" name="brand" required>
+            </div>
+            <div class="form-group">
+                <label>Daño:</label>
+                <textarea name="damage" required></textarea>
+            </div>
+            <button type="submit">Guardar Orden</button>
+        </form>
+        <a href="/orders" class="btn-link">Ver todas las órdenes</a>
+    </div>
+</body>
+</html> 

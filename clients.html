@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Clientes - Ecuafrim</title>
+    <link rel="icon" type="image/png" href="images/ecuafrim-logo.png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <button id="sidebarToggle" class="sidebar-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <img src="images/ecuafrim-logo.png" alt="Ecuafrim Logo" class="nav-logo">
+            <span>Ecuafrim</span>
+        </div>
+        <div class="nav-user">
+            <span id="userInfo">
+                <i class="fas fa-user"></i> 
+                <span id="userName">Admin</span>
+            </span>
+            <button onclick="logout()" class="btn-logout">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </button>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar">
+        
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <h4><i class="fas fa-tachometer-alt"></i> Dashboard</h4>
+                <a href="home.html" class="sidebar-link">
+                    <i class="fas fa-home"></i>
+                    <span>Inicio</span>
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <h4><i class="fas fa-tools"></i> Gestión</h4>
+                <a href="orders.html" class="sidebar-link">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Órdenes de Trabajo</span>
+                </a>
+                <a href="clients.html" class="sidebar-link active">
+                    <i class="fas fa-users"></i>
+                    <span>Clientes</span>
+                </a>
+                <a href="payments.html" class="sidebar-link">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span>Cobros</span>
+                </a>
+                <a href="inventory.html" class="sidebar-link">
+                    <i class="fas fa-boxes"></i>
+                    <span>Inventario</span>
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <h4><i class="fas fa-bell"></i> Recordatorios</h4>
+                <a href="reminders.html" class="sidebar-link">
+                    <i class="fas fa-bell"></i>
+                    <span>Recordatorios</span>
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <h4><i class="fas fa-chart-line"></i> Reportes</h4>
+                <a href="reports.html" class="sidebar-link">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reportes</span>
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <h4><i class="fas fa-cog"></i> Configuración</h4>
+                <a href="#" class="sidebar-link" onclick="showUserSettings()">
+                    <i class="fas fa-user-cog"></i>
+                    <span>Perfil de Usuario</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <i class="fas fa-user-circle"></i>
+                <div>
+                    <span id="sidebarUserName">Admin</span>
+                    <small>Usuario Activo</small>
+                </div>
+            </div>
+            <button onclick="logout()" class="sidebar-logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Cerrar Sesión</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Overlay para cerrar sidebar -->
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <div class="container">
+        <!-- Sección de búsqueda y botón nuevo cliente -->
+        <div class="page-header">
+            <div class="header-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchClient" placeholder="Buscar cliente...">
+                </div>
+                <button onclick="showNewClientForm()" class="btn-primary">
+                    <i class="fas fa-plus"></i> Nuevo Cliente
+                </button>
+            </div>
+        </div>
+
+        <!-- Tabla de clientes -->
+        <div class="card">
+            <div class="table-responsive">
+                <table id="clientsTable" class="orders-table">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-id-card"></i> Código</th>
+                            <th><i class="fas fa-user"></i> Nombre</th>
+                            <th><i class="fas fa-phone"></i> Teléfono</th>
+                            <th><i class="fas fa-city"></i> Ciudad</th>
+                            <th><i class="fas fa-map-marker-alt"></i> Dirección</th>
+                            <th><i class="fas fa-cogs"></i> Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientsTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Modal para nuevo/editar cliente -->
+        <div id="clientModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle">Nuevo Cliente</h3>
+                    <span class="close-btn" onclick="closeClientModal()">&times;</span>
+                </div>
+                <form id="clientForm" class="card-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> Nombre:</label>
+                            <input type="text" id="clientFirstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> Apellido:</label>
+                            <input type="text" id="clientLastName" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-phone"></i> Teléfono:</label>
+                            <input type="tel" id="clientPhone" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-city"></i> Ciudad:</label>
+                            <input type="text" id="clientCity" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-map-marker-alt"></i> Dirección:</label>
+                        <input type="text" id="clientAddress" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-info-circle"></i> Información Adicional:</label>
+                        <textarea id="clientInfo"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i> Guardar
+                        </button>
+                        <button type="button" onclick="closeClientModal()" class="btn-secondary">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/clients.js"></script>
+    <script src="js/responsive.js"></script>
+    <script src="js/sidebar.js"></script>
+</body>
+</html> 

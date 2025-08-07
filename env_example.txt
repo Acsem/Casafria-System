@@ -1,0 +1,21 @@
+# Configuración de Producción
+FLASK_ENV=production
+SECRET_KEY=tu-clave-secreta-muy-segura-aqui
+DATABASE_URL=sqlite:///orders.db
+
+# Configuración de seguridad
+SESSION_COOKIE_SECURE=True
+SESSION_COOKIE_HTTPONLY=True
+SESSION_COOKIE_SAMESITE=Lax
+
+# Configuración de logging
+LOG_LEVEL=INFO
+LOG_FILE=logs/ecuafrim.log
+
+# Credenciales por defecto (cambiar en producción)
+DEFAULT_USERNAME=admin
+DEFAULT_PASSWORD=admin123
+
+# Configuración de respaldos
+BACKUP_FOLDER=backups
+BACKUP_RETENTION_DAYS=30 

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Técnico - Ecuafrim</title>
+    <link rel="icon" type="image/png" href="images/ecuafrim-logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="home.html">
+                <i class="fas fa-home"></i> Panel de Control
+            </a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="home.html">
+                            <i class="fas fa-arrow-left"></i> Volver al Inicio
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Información del Técnico -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h3 id="technicianName">Nombre del Técnico</h3>
+                        <p class="text-muted" id="technicianSummary">
+                            Total de órdenes: <span id="totalOrders">0</span><br>
+                            Total pagado: $<span id="totalAmount">0</span>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex gap-2 justify-content-end">
+                            <select class="form-select w-auto" id="monthFilter">
+                                <option value="">Todos los meses</option>
+                            </select>
+                            <button class="btn btn-success" id="exportExcel">
+                                <i class="fas fa-file-excel"></i> Exportar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráfico de Pagos -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <canvas id="paymentsChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Tabla de Órdenes -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <table id="ordersTable" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Orden #</th>
+                            <th>Fecha</th>
+                            <th>Mes</th>
+                            <th>Monto</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Obtener ID del técnico de la URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const technicianId = parseInt(urlParams.get('id'));
+
+            if (!technicianId) {
+                window.location.href = 'home.html';
+                return;
+            }
+
+            // Cargar datos del técnico
+            const technicians = JSON.parse(localStorage.getItem('technicians') || '[]');
+            const payments = JSON.parse(localStorage.getItem('payments') || '[]');
+            const technician = technicians.find(t => t.id === technicianId);
+
+            if (!technician) {
+                window.location.href = 'home.html';
+                return;
+            }
+
+            // Mostrar información del técnico
+            $('#technicianName').text(technician.name);
+            const techPayments = payments.filter(p => p.technicianId === technicianId);
+            $('#totalOrders').text(techPayments.length);
+            $('#totalAmount').text(techPayments.reduce((sum, p) => sum + p.amount, 0).toLocaleString());
+
+            // Inicializar DataTable
+            const ordersTable = $('#ordersTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
+                },
+                order: [[1, 'desc']]
+            });
+
+            // Cargar datos en la tabla
+            function loadTableData(monthFilter = '') {
+                let filteredPayments = techPayments;
+                if (monthFilter) {
+                    filteredPayments = techPayments.filter(p => p.date.startsWith(monthFilter));
+                }
+
+                const tableData = filteredPayments.map(p => {
+                    const date = new Date(p.date);
+                    return [
+                        p.orderNumber,
+                        date.toLocaleDateString(),
+                        date.toLocaleString('es-ES', { month: 'long', year: 'numeric' }),
+                        `$${p.amount.toLocaleString()}`,
+                        `<button class="btn btn-sm btn-primary edit-payment" data-id="${p.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>`
+                    ];
+                });
+
+                ordersTable.clear().rows.add(tableData).draw();
+            }
+
+            // Cargar meses únicos en el filtro
+            const months = [...new Set(techPayments.map(p => p.date.substring(0, 7)))].sort();
+            months.forEach(month => {
+                const date = new Date(month + '-01');
+                const monthName = date.toLocaleString('es-ES', { month: 'long', year: 'numeric' });
+                $('#monthFilter').append(`<option value="${month}">${monthName}</option>`);
+            });
+
+            // Evento de filtro por mes
+            $('#monthFilter').change(function() {
+                loadTableData($(this).val());
+                updateChart($(this).val());
+            });
+
+            // Inicializar gráfico
+            const ctx = document.getElementById('paymentsChart').getContext('2d');
+            let paymentsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Pagos por Mes',
+                        data: [],
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Actualizar gráfico
+            function updateChart(monthFilter = '') {
+                let filteredPayments = techPayments;
+                if (monthFilter) {
+                    filteredPayments = techPayments.filter(p => p.date.startsWith(monthFilter));
+                }
+
+                const monthlyData = {};
+                filteredPayments.forEach(p => {
+                    const month = p.date.substring(0, 7);
+                    monthlyData[month] = (monthlyData[month] || 0) + p.amount;
+                });
+
+                const labels = Object.keys(monthlyData).sort();
+                const data = labels.map(month => monthlyData[month]);
+
+                paymentsChart.data.labels = labels.map(month => {
+                    const date = new Date(month + '-01');
+                    return date.toLocaleString('es-ES', { month: 'long', year: 'numeric' });
+                });
+                paymentsChart.data.datasets[0].data = data;
+                paymentsChart.update();
+            }
+
+            // Exportar a Excel
+            $('#exportExcel').click(function() {
+                const monthFilter = $('#monthFilter').val();
+                let filteredPayments = techPayments;
+                if (monthFilter) {
+                    filteredPayments = techPayments.filter(p => p.date.startsWith(monthFilter));
+                }
+
+                const exportData = filteredPayments.map(p => ({
+                    'Orden': p.orderNumber,
+                    'Fecha': new Date(p.date).toLocaleDateString(),
+                    'Mes': new Date(p.date).toLocaleString('es-ES', { month: 'long', year: 'numeric' }),
+                    'Monto': p.amount
+                }));
+
+                const ws = XLSX.utils.json_to_sheet(exportData);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Detalles");
+                XLSX.writeFile(wb, `pagos_${technician.name.replace(' ', '_')}.xlsx`);
+            });
+
+            // Cargar datos iniciales
+            loadTableData();
+            updateChart();
+
+            // Agregar funcionalidad de edición en la página de detalles
+            $('#ordersTable').on('click', '.edit-payment', function() {
+                const paymentId = $(this).data('id');
+                const payments = JSON.parse(localStorage.getItem('payments'));
+                const payment = payments.find(p => p.id === paymentId);
+                
+                if (payment) {
+                    // Crear modal de edición dinámicamente si no existe
+                    if (!$('#editModal').length) {
+                        $('body').append(`
+                            <div class="modal fade" id="editModal" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Editar Pago</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form id="editForm">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Número de Orden</label>
+                                                    <input type="text" class="form-control" id="orderNumber" readonly>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Fecha</label>
+                                                    <input type="date" class="form-control" id="paymentDate">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Monto</label>
+                                                    <input type="number" class="form-control" id="amount" required>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `);
+                    }
+
+                    // Llenar el formulario con los datos del pago
+                    $('#orderNumber').val(payment.orderNumber);
+                    $('#paymentDate').val(payment.date);
+                    $('#amount').val(payment.amount);
+                    $('#editForm').data('paymentId', paymentId);
+                    $('#editModal').modal('show');
+                }
+            });
+
+            // Agregar el evento de guardado de edición
+            $(document).on('submit', '#editForm', function(e) {
+                e.preventDefault();
+                const paymentId = $(this).data('paymentId');
+                const payments = JSON.parse(localStorage.getItem('payments'));
+                const paymentIndex = payments.findIndex(p => p.id === paymentId);
+                
+                if (paymentIndex !== -1) {
+                    payments[paymentIndex].amount = parseFloat($('#amount').val());
+                    payments[paymentIndex].date = $('#paymentDate').val();
+                    localStorage.setItem('payments', JSON.stringify(payments));
+                    
+                    $('#editModal').modal('hide');
+                    
+                    // Recargar los datos
+                    loadTableData($('#monthFilter').val());
+                    updateChart($('#monthFilter').val());
+                    
+                    // Actualizar totales
+                    const techPayments = payments.filter(p => p.technicianId === technicianId);
+                    $('#totalOrders').text(techPayments.length);
+                    $('#totalAmount').text(techPayments.reduce((sum, p) => sum + p.amount, 0).toLocaleString());
+                    
+                    // Mostrar mensaje de éxito
+                    alert('Pago actualizado exitosamente');
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

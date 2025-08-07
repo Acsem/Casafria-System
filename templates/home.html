@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecuafrim - Sistema de Gestión</title>
+    <link rel="icon" type="image/png" href="images/ecuafrim-logo.png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <img src="images/ecuafrim-logo.png" alt="Ecuafrim Logo" class="nav-logo">
+            <span>Ecuafrim</span>
+        </div>
+        <div class="nav-user">
+            <span id="userInfo">
+                <i class="fas fa-user"></i> 
+                <span id="userName">Admin</span>
+            </span>
+            <button onclick="logout()" class="btn-logout">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="welcome-section">
+            <div class="logo-container">
+                <img src="images/ecuafrim-logo.png" alt="Ecuafrim Logo" class="main-logo">
+            </div>
+            <h1>Bienvenido al Sistema de Gestión</h1>
+            <p>Seleccione una opción para comenzar</p>
+        </div>
+
+        <div class="menu-grid">
+            <a href="orders.html" class="menu-card">
+                <div class="menu-icon">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <h3>Sistema de Órdenes</h3>
+                <p>Gestione las órdenes de trabajo y seguimiento</p>
+                <span class="card-footer">
+                    <span id="orderCount">0 órdenes activas</span>
+                    <i class="fas fa-arrow-right"></i>
+                </span>
+            </a>
+
+            <a href="clients.html" class="menu-card">
+                <div class="menu-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Gestión de Clientes</h3>
+                <p>Administre la información de sus clientes</p>
+                <span class="card-footer">
+                    <span id="clientCount">0 clientes registrados</span>
+                    <i class="fas fa-arrow-right"></i>
+                </span>
+            </a>
+
+            <a href="payments.html" class="menu-card">
+                <div class="menu-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <h3>Gestión de Cobros</h3>
+                <p>Control y seguimiento de cobros por orden</p>
+                <span class="card-footer">
+                    <span id="pendingPayments">0 cobros pendientes</span>
+                    <i class="fas fa-arrow-right"></i>
+                </span>
+            </a>
+
+            <a href="inventory.html" class="menu-card">
+                <div class="menu-icon">
+                    <i class="fas fa-boxes"></i>
+                </div>
+                <h3>Gestión de Inventario</h3>
+                <p>Control de productos y repuestos</p>
+                <span class="card-footer">
+                    <span id="inventoryCount">0 productos</span>
+                    <i class="fas fa-arrow-right"></i>
+                </span>
+            </a>
+
+            <a href="reports.html" class="menu-card">
+                <div class="menu-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <h3>Reportes</h3>
+                <p>Visualice estadísticas y reportes del sistema</p>
+                <span class="card-footer">
+                    <span id="reportsCount">Ver reportes</span>
+                    <i class="fas fa-arrow-right"></i>
+                </span>
+            </a>
+
+
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2024 Sistema de Gestión. Todos los derechos reservados.</p>
+        <p>By. Andres Campoverde Samaniego</p>
+    </footer>
+
+    <script src="js/home.js"></script>
+    <script src="js/responsive.js"></script>
+</body>
+</html> 

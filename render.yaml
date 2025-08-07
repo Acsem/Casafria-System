@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: ecuafrim-app
+    env: python
+    buildCommand: |
+      pip install -r requirements.txt
+      python init_db.py
+    startCommand: gunicorn app:app --config gunicorn_config.py
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        value: orders.db
+      - key: SESSION_COOKIE_SECURE
+        value: true
+      - key: SESSION_COOKIE_HTTPONLY
+        value: true
+      - key: SESSION_COOKIE_SAMESITE
+        value: Lax
+      - key: LOG_LEVEL
+        value: INFO
+      - key: DEFAULT_USERNAME
+        value: admin
+      - key: DEFAULT_PASSWORD
+        value: admin123
+      - key: BACKUP_FOLDER
+        value: backups
+      - key: BACKUP_RETENTION_DAYS
+        value: 30 
