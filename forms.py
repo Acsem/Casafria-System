@@ -14,37 +14,7 @@ class LoginForm(FlaskForm):
         Length(min=6, message='La contraseña debe tener al menos 6 caracteres')
     ])
 
-class CredentialsForm(FlaskForm):
-    """Formulario para cambiar credenciales"""
-    username = StringField('Nuevo Usuario', validators=[
-        DataRequired(message='El usuario es requerido'),
-        Length(min=3, max=50, message='El usuario debe tener entre 3 y 50 caracteres')
-    ])
-    password = PasswordField('Nueva Contraseña', validators=[
-        DataRequired(message='La contraseña es requerida'),
-        Length(min=6, message='La contraseña debe tener al menos 6 caracteres')
-    ])
-    confirm_password = PasswordField('Confirmar Contraseña', validators=[
-        DataRequired(message='Debe confirmar la contraseña')
-    ])
 
-    def validate_username(self, field):
-        """Validar formato del usuario"""
-        if not re.match(r'^[a-zA-Z0-9_]+$', field.data):
-            raise ValidationError('El usuario solo puede contener letras, números y guiones bajos')
-
-    def validate_password(self, field):
-        """Validar fortaleza de la contraseña"""
-        password = field.data
-        if not re.search(r'[a-zA-Z]', password):
-            raise ValidationError('La contraseña debe contener al menos una letra')
-        if not re.search(r'\d', password):
-            raise ValidationError('La contraseña debe contener al menos un número')
-
-    def validate_confirm_password(self, field):
-        """Validar que las contraseñas coincidan"""
-        if self.password.data != field.data:
-            raise ValidationError('Las contraseñas no coinciden')
 
 class OrderForm(FlaskForm):
     """Formulario para órdenes de trabajo"""

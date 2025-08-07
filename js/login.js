@@ -27,8 +27,6 @@ function validateInput(input, minLength, maxLength, pattern = null) {
 
 // Elementos del DOM
 const loginForm = document.getElementById('loginForm');
-const configForm = document.getElementById('configForm');
-const configSection = document.getElementById('configSection');
 const errorMessage = document.getElementById('errorMessage');
 const successMessage = document.getElementById('successMessage');
 const loginBtn = document.getElementById('loginBtn');
@@ -65,48 +63,7 @@ function saveCredentials(username, password) {
     localStorage.setItem('doctec_credentials', JSON.stringify(credentials));
 }
 
-// Función para mostrar/ocultar sección de configuración
-function toggleConfig() {
-    const isVisible = configSection.style.display === 'block';
-    configSection.style.display = isVisible ? 'none' : 'block';
-    
-    if (!isVisible) {
-        // Limpiar formulario de configuración
-        configForm.reset();
-        clearMessages();
-    }
-}
 
-// Función para validar contraseña
-function validatePassword(password) {
-    // Mínimo 6 caracteres
-    if (password.length < 6) {
-        return 'La contraseña debe tener al menos 6 caracteres';
-    }
-    
-    // Al menos una letra y un número
-    const hasLetter = /[a-zA-Z]/.test(password);
-    const hasNumber = /\d/.test(password);
-    
-    if (!hasLetter || !hasNumber) {
-        return 'La contraseña debe contener al menos una letra y un número';
-    }
-    
-    return null;
-}
-
-// Función para validar usuario
-function validateUsername(username) {
-    if (username.length < 3) {
-        return 'El usuario debe tener al menos 3 caracteres';
-    }
-    
-    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-        return 'El usuario solo puede contener letras, números y guiones bajos';
-    }
-    
-    return null;
-}
 
 // Event listener para el formulario de login
 loginForm.addEventListener('submit', function(e) {
@@ -195,76 +152,7 @@ loginForm.addEventListener('submit', function(e) {
     }
 });
 
-// Event listener para el formulario de configuración
-configForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    clearMessages();
-    
-    const newUsername = document.getElementById('newUsername').value.trim();
-    const newPassword = document.getElementById('newPassword').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
-    
-    // Validaciones
-    const usernameError = validateUsername(newUsername);
-    if (usernameError) {
-        showMessage(usernameError);
-        return;
-    }
-    
-    const passwordError = validatePassword(newPassword);
-    if (passwordError) {
-        showMessage(passwordError);
-        return;
-    }
-    
-    if (newPassword !== confirmPassword) {
-        showMessage('Las contraseñas no coinciden');
-        return;
-    }
-    
-    // Guardar credenciales localmente primero
-    saveCredentials(newUsername, newPassword);
-    
-    // Intentar guardar en el servidor también
-    const formData = new FormData();
-    formData.append('username', newUsername);
-    formData.append('password', newPassword);
-    
-    fetch('/api/update_credentials', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => {
-        if (response.ok) {
-            return response.json();
-        } else {
-            throw new Error('Error en la respuesta del servidor');
-        }
-    })
-    .then(data => {
-        if (data.success) {
-            showMessage('Credenciales actualizadas correctamente. Puede iniciar sesión con las nuevas credenciales.', 'success');
-        } else {
-            showMessage('Credenciales guardadas localmente. ' + (data.message || ''));
-        }
-        
-        // Limpiar formulario y ocultar sección
-        configForm.reset();
-        setTimeout(() => {
-            toggleConfig();
-        }, 2000);
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showMessage('Credenciales guardadas localmente. Error de conexión con el servidor.');
-        
-        // Limpiar formulario y ocultar sección
-        configForm.reset();
-        setTimeout(() => {
-            toggleConfig();
-        }, 2000);
-    });
-});
+
 
 // Función para verificar si ya está logueado
 function checkLoginStatus() {
