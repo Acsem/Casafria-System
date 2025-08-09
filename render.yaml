@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: ecuafrim-app
+    name: casafria-app
     env: python
     pythonVersion: 3.12.7
     buildCommand: |

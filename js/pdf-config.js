@@ -1,14 +1,14 @@
-// Configuración personalizable del PDF - Formato Ecuafrim Original
+// Configuración personalizable del PDF - Formato Casafria Original
 const pdfConfig = {
     // Información de la empresa
     company: {
-        name: "Centro de Servicio Técnico EcuaFrim",
+        name: "Centro de Servicio Técnico Casafria",
         slogan: "REPARACIÓN, INSTALACIÓN Y MANTENIMIENTO LÍNEA BLANCA Y CALEFACCIÓN",
-        logo: "images/ecuafrim-logo.png",
+        logo: "images/casafria-logo.png",
         owner: "JUAN CARLOS CHAUCA CALLE",
         address: "Ricaurte Luis García Pañora S/N y calle Centro de Salud",
         phone: "0985043098 - 0986271916",
-        email: "ecuafrim_cuenca@hotmail.com"
+        email: "info"
     },
 
     // Configuración del documento
@@ -102,9 +102,9 @@ const pdfConfig = {
 
     // Textos personalizables
     texts: {
-        footer: "Gracias por confiar en Ecuafrim",
-        terms: "Declaro que entregue mi producto en las condiciones que estan escritas en este documento ECUAFRIM no se responsabiliza, Si despues de los 90 dias no ha retirado su equipo, no nos hacemos responsables después de ese tiempo por ningún trabajo realizado, ni equipos no retirados, sin ninguna exepción. No se regresará anticipo.",
-        disclaimer: "Declaro que entregue mi producto en las condiciones que estan escritas en este documento ECUAFRIM no se responsabiliza, Si despues de los 90 dias no ha retirado su equipo, no nos hacemos responsables después de ese tiempo por ningún trabajo realizado, ni equipos no retirados, sin ninguna exepción. No se regresará anticipo."
+        footer: "Gracias por confiar en Casafria",
+        terms: "Declaro que entregue mi producto en las condiciones que estan escritas en este documento CASAFRIA no se responsabiliza, Si despues de los 90 dias no ha retirado su equipo, no nos hacemos responsables después de ese tiempo por ningún trabajo realizado, ni equipos no retirados, sin ninguna exepción. No se regresará anticipo.",
+        disclaimer: "Declaro que entregue mi producto en las condiciones que estan escritas en este documento CASAFRIA no se responsabiliza, Si despues de los 90 dias no ha retirado su equipo, no nos hacemos responsables después de ese tiempo por ningún trabajo realizado, ni equipos no retirados, sin ninguna exepción. No se regresará anticipo."
     },
 
 }; 

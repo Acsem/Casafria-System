@@ -10,7 +10,7 @@ SESSION_COOKIE_SAMESITE=Lax
 
 # Configuración de logging
 LOG_LEVEL=INFO
-LOG_FILE=logs/ecuafrim.log
+LOG_FILE=logs/casafria.log
 
 # Credenciales por defecto (cambiar en producción)
 DEFAULT_USERNAME=admin

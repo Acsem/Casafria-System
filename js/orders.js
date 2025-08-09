@@ -645,7 +645,6 @@ async function printOrderPDF(orderNumber) {
                         color: #6b7280;
                         background: #f9fafb;
                         padding: 8px;
-                        border-radius: 4px;
                         border-left: 3px solid #e5e7eb;
                     }
                 </style>
@@ -653,14 +652,14 @@ async function printOrderPDF(orderNumber) {
                 <!-- Header -->
                 <div class="pdf-header">
                     <div class="company-info">
-                        <img src="${pdfConfig.company.logo}" class="company-logo" alt="Ecuafrim Logo">
+                        <img src="${pdfConfig.company.logo}" class="company-logo" alt="Casafria Logo">
                         <div class="company-details">
                             <h1>${pdfConfig.company.name}</h1>
                             <p class="slogan">${pdfConfig.company.slogan}</p>
                             <p class="owner">${pdfConfig.company.owner}</p>
                             <p>${pdfConfig.company.address}</p>
                             <p>${pdfConfig.company.phone}</p>
-                            <p>${pdfConfig.company.email}</p>
+                            <p>info</p>
                         </div>
                     </div>
                     <div class="document-title">
@@ -1166,12 +1165,12 @@ function generatePDFContent(order) {
             <!-- Header -->
             <div class="pdf-header">
                 <div class="company-info">
-                    <img src="images/ecuafrim-logo.png" class="company-logo" alt="Ecuafrim Logo">
+                    <img src="images/casafria-logo.png" class="company-logo" alt="Casafria Logo">
                     <div class="company-details">
-                        <h1>ECUAFRIM</h1>
+                        <h1>CASAFRIA</h1>
                         <p>Av. Principal #123, Quito - Ecuador</p>
                         <p>Tel: +593 99 123 4567</p>
-                        <p>info@ecuafrim.com</p>
+                        <p>info</p>
                     </div>
                 </div>
                 <div class="order-number">
@@ -1293,7 +1292,7 @@ function generatePDFContent(order) {
                         <div class="input-line" style="width: 80px; display: inline-block; margin-left: 5px;">________________</div>
                     </div>
                 </div>
-                <p style="font-size: 9px; margin: 2px 0;">Gracias por confiar en Ecuafrim</p>
+                <p style="font-size: 9px; margin: 2px 0;">Gracias por confiar en Casafria</p>
                 <small style="font-size: 8px;">Términos y condiciones aplicables</small>
             </div>
         </div>

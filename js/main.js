@@ -257,7 +257,7 @@ function renderFilteredOrders(filteredOrders) {
     });
 }
 
-// Agregar la función para generar el PDF - Formato Ecuafrim Original
+// Agregar la función para generar el PDF - Formato Casafria Original
 async function printOrderPDF(orderId) {
     try {
         const order = orders.find(o => o.id === orderId);
@@ -634,7 +634,7 @@ async function printOrderPDF(orderId) {
                 <!-- Header -->
                 <div class="pdf-header">
                     <div class="company-info">
-                        <img src="${pdfConfig.company.logo}" class="company-logo" alt="Ecuafrim Logo">
+                        <img src="${pdfConfig.company.logo}" class="company-logo" alt="Casafria Logo">
                         <div class="company-details">
                             <h1>${pdfConfig.company.name}</h1>
                             <p class="slogan">${pdfConfig.company.slogan}</p>

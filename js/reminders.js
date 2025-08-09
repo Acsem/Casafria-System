@@ -415,7 +415,7 @@ function exportRemindersToExcel() {
             </head>
             <body>
                 <div class="header">
-                    <h2>Reporte de Recordatorios - Ecuafrim</h2>
+                    <h2>Reporte de Recordatorios - Casafria</h2>
                     <p>Fecha de generación: ${new Date().toLocaleString('es-ES')}</p>
                 </div>
                 

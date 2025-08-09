@@ -7,7 +7,7 @@ import os
 import json
 from config import config
 from error_handlers import init_error_handlers, log_security_event, validate_input
-from forms import LoginForm, OrderForm, NoteForm
+from forms import LoginForm, CredentialsForm, OrderForm, NoteForm
 from auth_utils import login_required, get_current_user
 from backup_manager import BackupManager
 
@@ -88,12 +88,35 @@ def logout():
     session.clear()
     return redirect('/')
 
-
+@app.route('/api/update_credentials', methods=['POST'])
+def update_credentials():
+    form = CredentialsForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        
+        # Validar entrada adicional
+        is_valid, message = validate_input(username, 50)
+        if not is_valid:
+            return jsonify({'success': False, 'message': message})
+        
+        is_valid, message = validate_input(password, 100)
+        if not is_valid:
+            return jsonify({'success': False, 'message': message})
+        
+        if save_credentials(username, password):
+            log_security_event('credentials_updated', f'Credentials updated for user {username}')
+            return jsonify({'success': True, 'message': 'Credenciales actualizadas'})
+        else:
+            log_security_event('credentials_update_failed', f'Failed to update credentials for {username}')
+            return jsonify({'success': False, 'message': 'Error al actualizar credenciales'})
+    else:
+        return jsonify({'success': False, 'message': 'Datos de entrada inválidos'})
 
 @app.route('/orders')
 def view_orders():
     if 'username' not in session:
-        session['username'] = 'Ecuafrim'
+        session['username'] = 'Casafria'
     orders = db.get_orders()
     return render_template('view_orders.html', orders=orders)
 
