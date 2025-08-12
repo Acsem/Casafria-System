@@ -1,10 +1,192 @@
 let currentOrder = null;
 
 const technicians = [
-    { id: 1, name: "Técnico 1" },
-    { id: 2, name: "Técnico 2" }
-    // Agregar más técnicos según necesites
+    { id: 1, name: "Juan Pérez" },
+    { id: 2, name: "Carlos Rodríguez" },
+    { id: 3, name: "Miguel González" },
+    { id: 4, name: "Luis Martínez" },
+    { id: 5, name: "Roberto Silva" }
+    // Se pueden agregar más técnicos desde la interfaz
 ];
+
+// Cargar técnicos en el selector
+function loadTechnicians() {
+    const technicianSelect = document.getElementById('editTechnician');
+    if (!technicianSelect) return;
+    
+    // Limpiar opciones existentes (mantener la primera opción)
+    technicianSelect.innerHTML = '<option value="">Seleccionar técnico</option>';
+    
+    // Agregar opciones de técnicos
+    technicians.forEach(technician => {
+        const option = document.createElement('option');
+        option.value = technician.id;
+        option.textContent = technician.name;
+        technicianSelect.appendChild(option);
+    });
+}
+
+// Abrir modal de gestión de técnicos
+function manageTechnicians() {
+    document.getElementById('manageTechniciansModal').style.display = 'block';
+    renderTechniciansList();
+}
+
+// Cerrar modal de gestión de técnicos
+function closeManageTechniciansModal() {
+    document.getElementById('manageTechniciansModal').style.display = 'none';
+}
+
+// Cerrar modal cuando se haga clic fuera de él
+window.addEventListener('click', function(event) {
+    const modal = document.getElementById('manageTechniciansModal');
+    if (event.target === modal) {
+        closeManageTechniciansModal();
+    }
+});
+
+// Renderizar lista de técnicos
+function renderTechniciansList() {
+    const container = document.getElementById('techniciansListContainer');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    if (technicians.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: var(--text-light);">No hay técnicos registrados</p>';
+        return;
+    }
+    
+    technicians.forEach(technician => {
+        const technicianItem = document.createElement('div');
+        technicianItem.className = 'technician-item';
+        
+        const initials = technician.name.split(' ').map(n => n[0]).join('').toUpperCase();
+        
+        technicianItem.innerHTML = `
+            <div class="technician-info">
+                <div class="technician-avatar">${initials}</div>
+                <span class="technician-name">${technician.name}</span>
+            </div>
+            <div class="technician-actions">
+                <button onclick="editTechnician(${technician.id})" class="btn-small btn-secondary">
+                    <i class="fas fa-edit"></i> Editar
+                </button>
+                <button onclick="deleteTechnician(${technician.id})" class="btn-small btn-danger">
+                    <i class="fas fa-trash"></i> Eliminar
+                </button>
+            </div>
+        `;
+        
+        container.appendChild(technicianItem);
+    });
+}
+
+// Editar técnico
+function editTechnician(technicianId) {
+    const technician = technicians.find(t => t.id === technicianId);
+    if (!technician) return;
+    
+    const newName = prompt('Editar nombre del técnico:', technician.name);
+    if (newName && newName.trim() && newName !== technician.name) {
+        // Verificar si ya existe un técnico con ese nombre
+        const existingTechnician = technicians.find(t => 
+            t.id !== technicianId && 
+            t.name.toLowerCase().trim() === newName.toLowerCase().trim()
+        );
+        
+        if (existingTechnician) {
+            alert('Ya existe un técnico con ese nombre.');
+            return;
+        }
+        
+        technician.name = newName.trim();
+        
+        // Actualizar localStorage
+        localStorage.setItem('technicians', JSON.stringify(technicians));
+        
+        // Recargar listas
+        renderTechniciansList();
+        loadTechnicians();
+        
+        // Si estamos editando una orden, actualizar el display del técnico
+        const technicianDisplay = document.getElementById('technicianDisplay');
+        if (technicianDisplay && currentOrder && currentOrder.technician && currentOrder.technician.id === technicianId) {
+            technicianDisplay.textContent = technician.name;
+        }
+        
+        showNotification('Técnico actualizado exitosamente', 'success');
+    }
+}
+
+// Eliminar técnico
+function deleteTechnician(technicianId) {
+    const technician = technicians.find(t => t.id === technicianId);
+    if (!technician) return;
+    
+    // Verificar si el técnico está asignado a alguna orden
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+    const isAssigned = orders.some(order => order.technician && order.technician.id === technicianId);
+    
+    if (isAssigned) {
+        alert('No se puede eliminar este técnico porque está asignado a una o más órdenes.');
+        return;
+    }
+    
+    if (confirm(`¿Está seguro que desea eliminar al técnico "${technician.name}"?`)) {
+        const index = technicians.findIndex(t => t.id === technicianId);
+        if (index > -1) {
+            technicians.splice(index, 1);
+            
+            // Actualizar localStorage si existe
+            localStorage.setItem('technicians', JSON.stringify(technicians));
+            
+            // Recargar listas
+            renderTechniciansList();
+            loadTechnicians();
+            
+            showNotification('Técnico eliminado exitosamente', 'success');
+        }
+    }
+}
+
+// Agregar nuevo técnico
+function addNewTechnician(technicianName) {
+    if (!technicianName || !technicianName.trim()) return;
+    
+    // Verificar si ya existe un técnico con ese nombre
+    const existingTechnician = technicians.find(t => 
+        t.name.toLowerCase().trim() === technicianName.toLowerCase().trim()
+    );
+    
+    if (existingTechnician) {
+        alert('Ya existe un técnico con ese nombre.');
+        return;
+    }
+    
+    // Generar nuevo ID
+    const newId = technicians.length > 0 ? Math.max(...technicians.map(t => t.id)) + 1 : 1;
+    
+    // Agregar nuevo técnico
+    const newTechnician = {
+        id: newId,
+        name: technicianName.trim()
+    };
+    
+    technicians.push(newTechnician);
+    
+    // Actualizar localStorage si existe
+    localStorage.setItem('technicians', JSON.stringify(technicians));
+    
+    // Recargar listas
+    renderTechniciansList();
+    loadTechnicians();
+    
+    // Limpiar formulario
+    document.getElementById('newTechnicianName').value = '';
+    
+    showNotification('Técnico agregado exitosamente', 'success');
+}
 
 // Obtener el número de orden de la URL
 function getOrderNumberFromURL() {
@@ -45,6 +227,14 @@ function loadOrderDetails() {
     document.getElementById('purchaseDateDisplay').textContent = order.purchaseDate ? formatDate(order.purchaseDate) : 'No especificada';
     document.getElementById('warrantyStatusDisplay').textContent = order.warrantyStatus || 'No especificado';
     document.getElementById('damageDisplay').textContent = order.damage;
+    
+    // Cargar información del técnico asignado
+    const technicianDisplay = document.getElementById('technicianDisplay');
+    if (order.technician && order.technician.name) {
+        technicianDisplay.textContent = order.technician.name;
+    } else {
+        technicianDisplay.textContent = 'No asignado';
+    }
     
     // Cargar información de kilometraje y valor
     const kilometerDisplay = document.getElementById('kilometerDisplay');
@@ -285,6 +475,19 @@ function editOrder() {
     document.getElementById('editWarrantyStatus').value = order.warrantyStatus || '';
     document.getElementById('editDamage').value = order.damage;
     
+    // Cargar información del técnico asignado
+    const editTechnician = document.getElementById('editTechnician');
+    if (editTechnician) {
+        // Cargar técnicos disponibles
+        loadTechnicians();
+        // Seleccionar el técnico actual si existe
+        if (order.technician && order.technician.id) {
+            editTechnician.value = order.technician.id;
+        } else {
+            editTechnician.value = '';
+        }
+    }
+    
     // Cargar información de kilometraje y valor
     document.getElementById('editKilometer').value = order.kilometer || '';
     document.getElementById('editEstimatedValue').value = order.estimatedValue || '';
@@ -383,6 +586,16 @@ document.getElementById('editOrderForm').addEventListener('submit', function(e) 
         purchaseDate: document.getElementById('editPurchaseDate').value,
         warrantyStatus: document.getElementById('editWarrantyStatus').value,
         damage: document.getElementById('editDamage').value.trim(),
+        
+        // Guardar información del técnico asignado
+        technician: (() => {
+            const technicianId = document.getElementById('editTechnician').value;
+            if (technicianId) {
+                const selectedTechnician = technicians.find(t => t.id == technicianId);
+                return selectedTechnician ? { id: selectedTechnician.id, name: selectedTechnician.name } : null;
+            }
+            return null;
+        })(),
         
         // Guardar información de kilometraje y valor
         kilometer: document.getElementById('editKilometer').value ? parseInt(document.getElementById('editKilometer').value) : null,
@@ -681,5 +894,32 @@ function getPaymentStatusText(status) {
 
 // Inicializar la página
 document.addEventListener('DOMContentLoaded', function() {
+    // Cargar técnicos desde localStorage si existen
+    const savedTechnicians = localStorage.getItem('technicians');
+    if (savedTechnicians) {
+        try {
+            const parsedTechnicians = JSON.parse(savedTechnicians);
+            if (Array.isArray(parsedTechnicians) && parsedTechnicians.length > 0) {
+                technicians.length = 0; // Limpiar array
+                technicians.push(...parsedTechnicians); // Agregar técnicos guardados
+            }
+        } catch (e) {
+            console.error('Error al cargar técnicos desde localStorage:', e);
+        }
+    }
+    
+    // Event listener para el formulario de agregar técnico
+    const addTechnicianForm = document.getElementById('addTechnicianForm');
+    if (addTechnicianForm) {
+        addTechnicianForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const technicianName = document.getElementById('newTechnicianName').value.trim();
+            if (technicianName) {
+                addNewTechnician(technicianName);
+            }
+        });
+    }
+    
     loadOrderDetails();
+    loadTechnicians();
 }); 

@@ -5,10 +5,10 @@ const pdfConfig = {
         name: "Centro de Servicio Técnico Casafria",
         slogan: "REPARACIÓN, INSTALACIÓN Y MANTENIMIENTO LÍNEA BLANCA Y CALEFACCIÓN",
         logo: "images/casafria-logo.png",
-        owner: "JUAN CARLOS CHAUCA CALLE",
-        address: "Ricaurte Luis García Pañora S/N y calle Centro de Salud",
-        phone: "0985043098 - 0986271916",
-        email: "info"
+        owner: "Casafria",
+        address: "Pasaje",
+        phone: "0911234252",
+        email: "info@casafria.com"
     },
 
     // Configuración del documento
@@ -48,7 +48,7 @@ const pdfConfig = {
         year: "AÑO",
         model: "MODELO",
         series: "SERIE",
-        voltage: "VOLTAJE",
+        brand: "MARCA",
         warranty: "GARANTIA",
         yes: "SI",
         no: "NO",

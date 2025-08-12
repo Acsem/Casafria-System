@@ -26,6 +26,9 @@
                 <button onclick="addNote()" class="btn-secondary">
                     <i class="fas fa-comment-alt"></i> Agregar Nota
                 </button>
+                <button onclick="manageTechnicians()" class="btn-secondary">
+                    <i class="fas fa-users-cog"></i> Gestionar Técnicos
+                </button>
             </div>
         </div>
 
@@ -106,6 +109,14 @@
                     <div class="info-item">
                         <label>Estado de Garantía:</label>
                         <span id="warrantyStatusDisplay"></span>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h3><i class="fas fa-user-cog"></i> Técnico Asignado</h3>
+                    <div class="info-item">
+                        <label>Técnico:</label>
+                        <span id="technicianDisplay">No asignado</span>
                     </div>
                 </div>
 
@@ -243,6 +254,16 @@
                     <div class="form-group">
                         <label>Descripción del Daño</label>
                         <textarea id="editDamage" required placeholder="Describe detalladamente el problema o daño del producto..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h4><i class="fas fa-user-cog"></i> Técnico Asignado</h4>
+                    <div class="form-group">
+                        <label>Técnico</label>
+                        <select id="editTechnician">
+                            <option value="">Seleccionar técnico</option>
+                        </select>
                     </div>
                 </div>
 
@@ -399,6 +420,36 @@
                 </div>
                 <button type="submit" class="btn-primary">Agregar Nota</button>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal Gestionar Técnicos -->
+    <div id="manageTechniciansModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeManageTechniciansModal()">&times;</span>
+            <h3><i class="fas fa-users-cog"></i> Gestionar Técnicos</h3>
+            
+            <!-- Lista de técnicos existentes -->
+            <div class="technicians-list">
+                <h4>Técnicos Disponibles</h4>
+                <div id="techniciansListContainer">
+                    <!-- Los técnicos se cargarán aquí -->
+                </div>
+            </div>
+            
+            <!-- Formulario para agregar nuevo técnico -->
+            <div class="add-technician-form">
+                <h4>Agregar Nuevo Técnico</h4>
+                <form id="addTechnicianForm">
+                    <div class="form-group">
+                        <label>Nombre del Técnico</label>
+                        <input type="text" id="newTechnicianName" required placeholder="Ej: Pedro López">
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-plus"></i> Agregar Técnico
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 

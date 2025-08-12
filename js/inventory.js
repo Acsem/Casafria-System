@@ -495,3 +495,8 @@ function exportInventoryToExcel() {
         showMessage('Error al exportar el reporte. Por favor, intente nuevamente.');
     }
 } 
+
+// Función para abrir la pantalla de herramientas por técnico
+function openTechnicianTools() {
+    window.location.href = 'technician-tools.html';
+} 

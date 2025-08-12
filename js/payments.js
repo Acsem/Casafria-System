@@ -34,7 +34,7 @@ function renderPayments() {
     if (allPayments.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="9" style="text-align: center; padding: 2rem; color: var(--text-light);">
+                <td colspan="10" style="text-align: center; padding: 2rem; color: var(--text-light);">
                     <i class="fas fa-info-circle"></i> No hay cobros registrados.
                     <br><small>Los cobros aparecerán aquí una vez que se registren desde órdenes existentes o se creen nuevos cobros independientes.</small>
                 </td>
@@ -46,6 +46,7 @@ function renderPayments() {
     allPayments.forEach(payment => {
         const statusText = getStatusText(payment.paymentStatus);
         const statusClass = getStatusClass(payment.paymentStatus);
+        const paymentTypeText = getPaymentTypeText(payment.paymentType);
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -54,6 +55,7 @@ function renderPayments() {
             <td>${payment.product}</td>
             <td>${payment.brand || 'No especificada'}</td>
             <td>$${payment.serviceValue ? payment.serviceValue.toFixed(2) : '0.00'}</td>
+            <td>${paymentTypeText}</td>
             <td>
                 <span class="status-badge ${statusClass}">
                     ${statusText}
@@ -96,6 +98,20 @@ function getStatusClass(status) {
     }
 }
 
+// Función para obtener texto del tipo de pago
+function getPaymentTypeText(paymentType) {
+    if (!paymentType) return '-';
+    
+    switch(paymentType) {
+        case 'efectivo': return 'Efectivo';
+        case 'transferencia': return 'Transferencia';
+        case 'cheque': return 'Cheque';
+        case 'tarjeta_credito': return 'Tarjeta de Crédito';
+        case 'tarjeta_debito': return 'Tarjeta de Débito';
+        default: return paymentType;
+    }
+}
+
 // Función para editar cobro
 function editPayment(orderNumber, isFromOrder = false) {
     if (isFromOrder) {
@@ -106,12 +122,14 @@ function editPayment(orderNumber, isFromOrder = false) {
         const paymentInfo = order.paymentInfo || {
             serviceValue: 0,
             paymentStatus: 'sin_cobro',
+            paymentType: '',
             paymentObservations: ''
         };
 
         document.getElementById('orderId').value = orderNumber;
         document.getElementById('paymentStatus').value = paymentInfo.paymentStatus;
         document.getElementById('paymentAmount').value = paymentInfo.serviceValue;
+        document.getElementById('paymentType').value = paymentInfo.paymentType;
         document.getElementById('paymentObservations').value = paymentInfo.paymentObservations;
 
         document.getElementById('paymentModal').style.display = 'block';
@@ -123,6 +141,7 @@ function editPayment(orderNumber, isFromOrder = false) {
         document.getElementById('orderId').value = orderNumber;
         document.getElementById('paymentStatus').value = payment.paymentStatus;
         document.getElementById('paymentAmount').value = payment.serviceValue;
+        document.getElementById('paymentType').value = payment.paymentType;
         document.getElementById('paymentObservations').value = payment.paymentObservations;
 
         document.getElementById('paymentModal').style.display = 'block';
@@ -190,6 +209,7 @@ document.getElementById('paymentForm').addEventListener('submit', function(e) {
         orders[orderIndex].paymentInfo = {
             serviceValue: parseFloat(document.getElementById('paymentAmount').value) || 0,
             paymentStatus: document.getElementById('paymentStatus').value,
+            paymentType: document.getElementById('paymentType').value,
             paymentObservations: document.getElementById('paymentObservations').value,
             lastUpdate: new Date().toISOString()
         };
@@ -201,6 +221,7 @@ document.getElementById('paymentForm').addEventListener('submit', function(e) {
             ...payments[paymentIndex],
             serviceValue: parseFloat(document.getElementById('paymentAmount').value) || 0,
             paymentStatus: document.getElementById('paymentStatus').value,
+            paymentType: document.getElementById('paymentType').value,
             paymentObservations: document.getElementById('paymentObservations').value,
             lastUpdate: new Date().toISOString()
         };
@@ -266,7 +287,7 @@ function renderFilteredPayments(filteredOrders, filteredPayments) {
     if (allFilteredPayments.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="9" style="text-align: center; padding: 2rem; color: var(--text-light);">
+                <td colspan="10" style="text-align: center; padding: 2rem; color: var(--text-light);">
                     <i class="fas fa-search"></i> No se encontraron cobros que coincidan con la búsqueda.
                 </td>
             </tr>
@@ -277,6 +298,7 @@ function renderFilteredPayments(filteredOrders, filteredPayments) {
     allFilteredPayments.forEach(payment => {
         const statusText = getStatusText(payment.paymentStatus);
         const statusClass = getStatusClass(payment.paymentStatus);
+        const paymentTypeText = getPaymentTypeText(payment.paymentType);
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -285,6 +307,7 @@ function renderFilteredPayments(filteredOrders, filteredPayments) {
             <td>${payment.product}</td>
             <td>${payment.brand || 'No especificada'}</td>
             <td>$${payment.serviceValue ? payment.serviceValue.toFixed(2) : '0.00'}</td>
+            <td>${paymentTypeText}</td>
             <td>
                 <span class="status-badge ${statusClass}">
                     ${statusText}
@@ -369,6 +392,7 @@ function exportToExcel() {
             'Producto': payment.product,
             'Marca': payment.brand || 'No especificada',
             'Valor del Servicio': `$${payment.serviceValue ? payment.serviceValue.toFixed(2) : '0.00'}`,
+            'Tipo de Pago': getPaymentTypeText(payment.paymentType),
             'Estado del Pago': getStatusText(payment.paymentStatus),
             'Fecha': new Date(payment.date).toLocaleDateString(),
             'Observaciones': payment.paymentObservations || '-',
@@ -386,6 +410,7 @@ function exportToExcel() {
                         <th style="padding: 8px; border: 1px solid #ddd;">Producto</th>
                         <th style="padding: 8px; border: 1px solid #ddd;">Marca</th>
                         <th style="padding: 8px; border: 1px solid #ddd;">Valor del Servicio</th>
+                        <th style="padding: 8px; border: 1px solid #ddd;">Tipo de Pago</th>
                         <th style="padding: 8px; border: 1px solid #ddd;">Estado del Pago</th>
                         <th style="padding: 8px; border: 1px solid #ddd;">Fecha</th>
                         <th style="padding: 8px; border: 1px solid #ddd;">Observaciones</th>
@@ -404,6 +429,7 @@ function exportToExcel() {
                     <td style="padding: 6px; border: 1px solid #ddd;">${row['Producto']}</td>
                     <td style="padding: 6px; border: 1px solid #ddd;">${row['Marca']}</td>
                     <td style="padding: 6px; border: 1px solid #ddd;">${row['Valor del Servicio']}</td>
+                    <td style="padding: 6px; border: 1px solid #ddd;">${row['Tipo de Pago']}</td>
                     <td style="padding: 6px; border: 1px solid #ddd;">${row['Estado del Pago']}</td>
                     <td style="padding: 6px; border: 1px solid #ddd;">${row['Fecha']}</td>
                     <td style="padding: 6px; border: 1px solid #ddd;">${row['Observaciones']}</td>
@@ -507,11 +533,12 @@ document.getElementById('newPaymentForm').addEventListener('submit', function(e)
     const product = document.getElementById('newService').value.trim();
     const paymentDate = document.getElementById('newPaymentDate').value;
     const paymentAmount = parseFloat(document.getElementById('newPaymentAmount').value);
+    const paymentType = document.getElementById('newPaymentType').value;
     const paymentStatus = document.getElementById('newPaymentStatus').value;
     const paymentObservations = document.getElementById('newPaymentObservations').value.trim();
 
     // Validar campos requeridos
-    if (!orderNumber || !clientName || !product || !paymentDate || !paymentAmount) {
+    if (!orderNumber || !clientName || !product || !paymentDate || !paymentAmount || !paymentType) {
         showMessage('Por favor, complete todos los campos requeridos.');
         return;
     }
@@ -538,6 +565,7 @@ document.getElementById('newPaymentForm').addEventListener('submit', function(e)
         date: paymentDate,
         serviceValue: paymentAmount,
         paymentStatus: paymentStatus,
+        paymentType: paymentType,
         paymentObservations: paymentObservations,
         lastUpdate: new Date().toISOString()
     };

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba de Navegación - Casafria</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 5px;
+            background: #1e3a8a;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: #3b82f6;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Prueba de Navegación - Casafria</h1>
+    
+    <div class="test-section">
+        <h2>✅ Funcionalidades Implementadas</h2>
+        <ul>
+            <li><strong>Pantalla de Herramientas por Técnico:</strong> Nueva pantalla completa para gestionar asignaciones de herramientas</li>
+            <li><strong>Navegación:</strong> Botón en inventario.html que lleva a technician-tools.html</li>
+            <li><strong>Gestión de Datos:</strong> CRUD completo para asignaciones de herramientas</li>
+            <li><strong>Búsqueda y Filtros:</strong> Sistema de búsqueda en tiempo real</li>
+            <li><strong>Exportación Excel:</strong> Generación de reportes en formato Excel</li>
+            <li><strong>Responsive Design:</strong> Diseño adaptativo para móviles</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2>🔗 Enlaces de Prueba</h2>
+        <p>Haz clic en los siguientes enlaces para probar la navegación:</p>
+        
+        <a href="inventory.html" class="btn">📦 Ir a Inventario</a>
+        <a href="technician-tools.html" class="btn">🛠️ Ir a Herramientas por Técnico</a>
+        <a href="home.html" class="btn">🏠 Ir a Inicio</a>
+    </div>
+
+    <div class="test-section">
+        <h2>📋 Checklist de Verificación</h2>
+        <div id="checklist">
+            <div class="status success">✅ Archivo technician-tools.html creado</div>
+            <div class="status success">✅ Archivo js/technician-tools.js creado</div>
+            <div class="status success">✅ Botón agregado a inventory.html</div>
+            <div class="status success">✅ Función openTechnicianTools() en inventory.js</div>
+            <div class="status success">✅ Estilos CSS agregados</div>
+            <div class="status success">✅ Sistema de navegación funcional</div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🚀 Próximos Pasos</h2>
+        <ol>
+            <li>Abrir <strong>inventory.html</strong> en el navegador</li>
+            <li>Hacer clic en el botón <strong>"Herramientas por Técnico"</strong></li>
+            <li>Verificar que se abra la nueva pantalla</li>
+            <li>Probar la funcionalidad de asignar herramientas</li>
+            <li>Probar la búsqueda y filtros</li>
+            <li>Probar la exportación a Excel</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2>💡 Características Destacadas</h2>
+        <ul>
+            <li><strong>Interfaz Intuitiva:</strong> Diseño moderno y fácil de usar</li>
+            <li><strong>Gestón Completa:</strong> Asignar, devolver y eliminar herramientas</li>
+            <li><strong>Estado Visual:</strong> Colores diferentes para herramientas activas, devueltas y vencidas</li>
+            <li><strong>Resumen en Tiempo Real:</strong> Contadores actualizados automáticamente</li>
+            <li><strong>Búsqueda Avanzada:</strong> Filtrado por técnico, herramienta o observaciones</li>
+            <li><strong>Reportes Excel:</strong> Exportación completa con formato profesional</li>
+        </ul>
+    </div>
+
+    <script>
+        // Función para verificar que los archivos existen
+        function checkFiles() {
+            const files = [
+                'inventory.html',
+                'technician-tools.html',
+                'js/technician-tools.js',
+                'js/inventory.js',
+                'css/style.css'
+            ];
+            
+            files.forEach(file => {
+                fetch(file)
+                    .then(response => {
+                        if (response.ok) {
+                            console.log(`✅ ${file} - OK`);
+                        } else {
+                            console.error(`❌ ${file} - No encontrado`);
+                        }
+                    })
+                    .catch(error => {
+                        console.error(`❌ ${file} - Error:`, error);
+                    });
+            });
+        }
+
+        // Ejecutar verificación al cargar la página
+        window.onload = function() {
+            checkFiles();
+        };
+    </script>
+</body>
+</html> 

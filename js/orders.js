@@ -19,6 +19,7 @@ function getOrders() {
                 warrantyStatus: 'Vigente',
                 damage: 'No enciende, pantalla negra',
                 date: '2024-01-20',
+                technician: { id: 1, name: 'Juan Pérez' },
                 notes: ['Diagnóstico: Problema de fuente de poder', 'Cliente autoriza reparación']
             },
             {
@@ -35,6 +36,7 @@ function getOrders() {
                 warrantyStatus: 'Vencida',
                 damage: 'Pantalla rota, no responde al tacto',
                 date: '2024-01-22',
+                technician: { id: 2, name: 'Carlos Rodríguez' },
                 notes: ['Presupuesto enviado al cliente']
             },
             {
@@ -51,6 +53,7 @@ function getOrders() {
                 warrantyStatus: 'Vigente',
                 damage: 'Atascamiento de papel frecuente',
                 date: '2024-01-25',
+                technician: { id: 3, name: 'Miguel González' },
                 notes: ['Limpieza realizada', 'Cliente satisfecho']
             },
             {
@@ -67,6 +70,7 @@ function getOrders() {
                 warrantyStatus: 'Sin Garantía',
                 damage: 'Batería no carga, se apaga rápido',
                 date: '2024-01-28',
+                technician: { id: 4, name: 'Luis Martínez' },
                 notes: ['Batería reemplazada', 'Pruebas exitosas']
             },
             {
@@ -83,6 +87,7 @@ function getOrders() {
                 warrantyStatus: 'Vigente',
                 damage: 'Líneas verticales en pantalla',
                 date: '2024-01-30',
+                technician: { id: 5, name: 'Roberto Silva' },
                 notes: ['Panel LCD defectuoso', 'En espera de repuesto']
             }
         ];
@@ -94,6 +99,86 @@ function getOrders() {
 
 function saveOrders(orders) {
     localStorage.setItem('orders', JSON.stringify(orders));
+}
+
+// Función para cargar técnicos
+function loadTechnicians() {
+    const technicianSelect = document.getElementById('technician');
+    if (!technicianSelect) return;
+    
+    // Obtener técnicos desde localStorage o usar los predeterminados
+    let technicians = [];
+    const savedTechnicians = localStorage.getItem('technicians');
+    
+    if (savedTechnicians) {
+        try {
+            technicians = JSON.parse(savedTechnicians);
+        } catch (e) {
+            console.error('Error al cargar técnicos:', e);
+        }
+    }
+    
+    // Si no hay técnicos guardados, usar los predeterminados
+    if (technicians.length === 0) {
+        technicians = [
+            { id: 1, name: "Juan Pérez" },
+            { id: 2, name: "Carlos Rodríguez" },
+            { id: 3, name: "Miguel González" },
+            { id: 4, name: "Luis Martínez" },
+            { id: 5, name: "Roberto Silva" }
+        ];
+    }
+    
+    // Limpiar opciones existentes
+    technicianSelect.innerHTML = '<option value="">Seleccionar técnico</option>';
+    
+    // Agregar opciones de técnicos
+    technicians.forEach(technician => {
+        const option = document.createElement('option');
+        option.value = technician.id;
+        option.textContent = technician.name;
+        technicianSelect.appendChild(option);
+    });
+}
+
+// Función para cargar técnicos en el filtro avanzado
+function loadTechniciansForFilter() {
+    const technicianFilterSelect = document.getElementById('filterTechnician');
+    if (!technicianFilterSelect) return;
+    
+    // Obtener técnicos desde localStorage o usar los predeterminados
+    let technicians = [];
+    const savedTechnicians = localStorage.getItem('technicians');
+    
+    if (savedTechnicians) {
+        try {
+            technicians = JSON.parse(savedTechnicians);
+        } catch (e) {
+            console.error('Error al cargar técnicos para filtro:', e);
+        }
+    }
+    
+    // Si no hay técnicos guardados, usar los predeterminados
+    if (technicians.length === 0) {
+        technicians = [
+            { id: 1, name: "Juan Pérez" },
+            { id: 2, name: "Carlos Rodríguez" },
+            { id: 3, name: "Miguel González" },
+            { id: 4, name: "Luis Martínez" },
+            { id: 5, name: "Roberto Silva" }
+        ];
+    }
+    
+    // Limpiar opciones existentes
+    technicianFilterSelect.innerHTML = '<option value="">Todos los técnicos</option>';
+    
+    // Agregar opciones de técnicos
+    technicians.forEach(technician => {
+        const option = document.createElement('option');
+        option.value = technician.id;
+        option.textContent = technician.name;
+        technicianFilterSelect.appendChild(option);
+    });
 }
 
 // Función para calcular el total de costos
@@ -113,7 +198,7 @@ function renderOrders() {
     updateOrdersCounter(orders.length, orders.length);
     
     if (orders.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">No hay órdenes registradas</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;">No hay órdenes registradas</td></tr>';
         return;
     }
     
@@ -121,6 +206,23 @@ function renderOrders() {
         const notesCount = (order.notes || []).length;
         const currentStatus = order.status || 'ingresada';
         const statusText = currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1);
+        
+        // Obtener nombre del técnico
+        let technicianName = 'No asignado';
+        if (order.technician && order.technician.id) {
+            const savedTechnicians = localStorage.getItem('technicians');
+            if (savedTechnicians) {
+                try {
+                    const technicians = JSON.parse(savedTechnicians);
+                    const technician = technicians.find(t => t.id == order.technician.id);
+                    if (technician) {
+                        technicianName = technician.name;
+                    }
+                } catch (e) {
+                    console.error('Error al cargar técnico:', e);
+                }
+            }
+        }
         
         const tr = document.createElement('tr');
         tr.className = 'order-row';
@@ -131,6 +233,7 @@ function renderOrders() {
             <td>${order.clientName}</td>
             <td>${order.product}</td>
             <td>${order.brand}</td>
+            <td>${technicianName}</td>
             <td>${order.damage}</td>
             <td>${order.date}</td>
             <td>
@@ -172,6 +275,7 @@ function renderOrders() {
 // Modal Nueva Orden
 function showNewOrderForm() {
     document.getElementById('newOrderModal').style.display = 'block';
+    loadTechnicians(); // Cargar técnicos en el selector
 }
 function closeNewOrderForm() {
     document.getElementById('newOrderModal').style.display = 'none';
@@ -186,6 +290,29 @@ document.getElementById('newOrderForm').addEventListener('submit', function(e) {
         alert('El número de orden ya existe. Usa uno diferente.');
         return;
     }
+    
+    // Obtener información del técnico
+    const technicianId = document.getElementById('technician').value;
+    let technician = null;
+    
+    if (technicianId) {
+        const savedTechnicians = localStorage.getItem('technicians');
+        if (savedTechnicians) {
+            try {
+                const technicians = JSON.parse(savedTechnicians);
+                const selectedTechnician = technicians.find(t => t.id == technicianId);
+                if (selectedTechnician) {
+                    technician = {
+                        id: selectedTechnician.id,
+                        name: selectedTechnician.name
+                    };
+                }
+            } catch (e) {
+                console.error('Error al obtener técnico:', e);
+            }
+        }
+    }
+    
     const newOrder = {
         orderNumber,
         clientName: document.getElementById('clientName').value.trim(),
@@ -200,13 +327,14 @@ document.getElementById('newOrderForm').addEventListener('submit', function(e) {
         warrantyStatus: document.getElementById('warrantyStatus').value,
         damage: document.getElementById('damage').value.trim(),
         date: document.getElementById('orderDate').value,
+        technician: technician,
         notes: []
     };
     orders.push(newOrder);
     saveOrders(orders);
     closeNewOrderForm();
     renderOrders();
-    updateOrdersCounter(orders.length, orders.length);
+    showMessage('Orden creada exitosamente', 'success');
 });
 
 // Modal Notas
@@ -218,6 +346,29 @@ function showNoteModal(orderNumber) {
 function closeNoteModal() {
     document.getElementById('noteModal').style.display = 'none';
     document.getElementById('noteForm').reset();
+}
+
+// Mostrar mensaje
+function showMessage(message, type = 'info') {
+    // Crear un toast notification
+    const toast = document.createElement('div');
+    toast.className = `notification notification-${type}`;
+    toast.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+        <span>${message}</span>
+    `;
+    
+    // Agregar al body
+    document.body.appendChild(toast);
+    
+    // Mostrar
+    setTimeout(() => toast.classList.add('show'), 100);
+    
+    // Ocultar después de 3 segundos
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => document.body.removeChild(toast), 300);
+    }, 3000);
 }
 
 document.getElementById('noteForm').addEventListener('submit', function(e) {
@@ -745,7 +896,7 @@ async function printOrderPDF(orderNumber) {
                         <tr>
                             <th>${pdfConfig.fields.model}</th>
                             <th>${pdfConfig.fields.series}</th>
-                            <th>${pdfConfig.fields.voltage}</th>
+                            <th>${pdfConfig.fields.brand}</th>
                             <th>${pdfConfig.fields.warranty}</th>
                         </tr>
                     </thead>
@@ -753,7 +904,7 @@ async function printOrderPDF(orderNumber) {
                         <tr>
                             <td>${order.product || '________________'}</td>
                             <td>________________</td>
-                            <td>${order.purchaseDate ? new Date(order.purchaseDate).toLocaleDateString('es-ES') : '________________'}</td>
+                            <td>${order.brand || '________________'}</td>
                             <td>
                                 <div class="compact-checkbox-group">
                                     <div class="compact-checkbox-item">
@@ -762,40 +913,6 @@ async function printOrderPDF(orderNumber) {
                                     </div>
                                     <div class="compact-checkbox-item">
                                         <input type="checkbox" ${order.warrantyStatus === 'Vencida' || order.warrantyStatus === 'Sin Garantía' ? 'checked' : ''}>
-                                        <span>${pdfConfig.fields.no}</span>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>________________</td>
-                            <td>________________</td>
-                            <td>________________</td>
-                            <td>
-                                <div class="compact-checkbox-group">
-                                    <div class="compact-checkbox-item">
-                                        <input type="checkbox">
-                                        <span>${pdfConfig.fields.yes}</span>
-                                    </div>
-                                    <div class="compact-checkbox-item">
-                                        <input type="checkbox">
-                                        <span>${pdfConfig.fields.no}</span>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>________________</td>
-                            <td>________________</td>
-                            <td>________________</td>
-                            <td>
-                                <div class="compact-checkbox-group">
-                                    <div class="compact-checkbox-item">
-                                        <input type="checkbox">
-                                        <span>${pdfConfig.fields.yes}</span>
-                                    </div>
-                                    <div class="compact-checkbox-item">
-                                        <input type="checkbox">
                                         <span>${pdfConfig.fields.no}</span>
                                     </div>
                                 </div>
@@ -820,38 +937,7 @@ async function printOrderPDF(orderNumber) {
                     </div>
                 </div>
 
-                <!-- Datos de Repuestos -->
-                <div class="section-header">${pdfConfig.sections.partsData}</div>
-                <table class="compact-table">
-                    <thead>
-                        <tr>
-                            <th>${pdfConfig.fields.partCode}</th>
-                            <th>${pdfConfig.fields.spareCode}</th>
-                            <th>${pdfConfig.fields.quantity}</th>
-                            <th>${pdfConfig.fields.spare}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>________________</td>
-                            <td>________________</td>
-                            <td>________________</td>
-                            <td>________________</td>
-                        </tr>
-                        <tr>
-                            <td>________________</td>
-                            <td>________________</td>
-                            <td>________________</td>
-                            <td>________________</td>
-                        </tr>
-                        <tr>
-                            <td>________________</td>
-                            <td>________________</td>
-                            <td>________________</td>
-                            <td>________________</td>
-                        </tr>
-                    </tbody>
-                </table>
+
 
                 <!-- Datos de Almacén y Costos -->
                 <div class="cost-summary">
@@ -1318,14 +1404,24 @@ function setupSearchListener() {
             return;
         }
         
-        const filteredOrders = orders.filter(order => 
+        const filteredOrders = orders.filter(order => {
+            // Búsqueda básica en campos principales
+            const basicMatch = 
             order.orderNumber.toLowerCase().includes(searchTerm) ||
             order.clientName.toLowerCase().includes(searchTerm) ||
             order.product.toLowerCase().includes(searchTerm) ||
             order.brand.toLowerCase().includes(searchTerm) ||
             order.damage.toLowerCase().includes(searchTerm) ||
-            order.date.toLowerCase().includes(searchTerm)
-        );
+                order.date.toLowerCase().includes(searchTerm);
+            
+            // Búsqueda por técnico
+            let technicianMatch = false;
+            if (order.technician && order.technician.name) {
+                technicianMatch = order.technician.name.toLowerCase().includes(searchTerm);
+            }
+            
+            return basicMatch || technicianMatch;
+        });
         
         renderFilteredOrders(filteredOrders);
         showClearSearchButton();
@@ -1370,6 +1466,7 @@ let activeFilters = {
     clientCity: '',
     product: '',
     brand: '',
+    technician: '',
     warrantyStatus: '',
     orderNumber: '',
     notes: ''
@@ -1408,9 +1505,13 @@ function loadCurrentFilters() {
     document.getElementById('filterClientCity').value = activeFilters.clientCity;
     document.getElementById('filterProduct').value = activeFilters.product;
     document.getElementById('filterBrand').value = activeFilters.brand;
+    document.getElementById('filterTechnician').value = activeFilters.technician;
     document.getElementById('filterWarrantyStatus').value = activeFilters.warrantyStatus;
     document.getElementById('filterOrderNumber').value = activeFilters.orderNumber;
     document.getElementById('filterNotes').value = activeFilters.notes;
+    
+    // Cargar técnicos en el selector
+    loadTechniciansForFilter();
 }
 
 // Aplicar filtros avanzados
@@ -1425,6 +1526,7 @@ function applyAdvancedFilters() {
         clientCity: formData.get('filterClientCity') || '',
         product: formData.get('filterProduct') || '',
         brand: formData.get('filterBrand') || '',
+        technician: formData.get('filterTechnician') || '',
         warrantyStatus: formData.get('filterWarrantyStatus') || '',
         orderNumber: formData.get('filterOrderNumber') || '',
         notes: formData.get('filterNotes') || ''
@@ -1479,6 +1581,13 @@ function applyFilters() {
         );
     }
 
+    // Filtro por técnico
+    if (activeFilters.technician) {
+        filteredOrders = filteredOrders.filter(order => 
+            order.technician && order.technician.id == activeFilters.technician
+        );
+    }
+
     // Filtro por garantía
     if (activeFilters.warrantyStatus) {
         filteredOrders = filteredOrders.filter(order => 
@@ -1517,6 +1626,7 @@ function clearAdvancedFilters() {
         clientCity: '',
         product: '',
         brand: '',
+        technician: '',
         warrantyStatus: '',
         orderNumber: '',
         notes: ''
@@ -1559,7 +1669,7 @@ function updateFilterSummary() {
 }
 
 // Mostrar mensaje
-function showMessage(message) {
+function showMessage(message, type = 'info') {
     // Crear un toast notification
     const toast = document.createElement('div');
     toast.style.cssText = `

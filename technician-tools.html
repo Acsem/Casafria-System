@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Herramientas por Técnico - Casafria</title>
+    <link rel="icon" type="image/png" href="images/casafria-logo.png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <button id="sidebarToggle" class="sidebar-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <img src="images/casafria-logo.png" alt="Casafria Logo" class="nav-logo">
+            <span>Casafria</span>
+        </div>
+        <div class="nav-user">
+            <span id="userInfo">
+                <i class="fas fa-user"></i> 
+                <span id="userName">Admin</span>
+            </span>
+            <button onclick="logout()" class="btn-logout">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </button>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar">
+        
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <h4><i class="fas fa-tachometer-alt"></i> Dashboard</h4>
+                <a href="home.html" class="sidebar-link">
+                    <i class="fas fa-home"></i>
+                    <span>Inicio</span>
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <h4><i class="fas fa-tools"></i> Gestión</h4>
+                <a href="orders.html" class="sidebar-link">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Órdenes de Trabajo</span>
+                </a>
+                <a href="clients.html" class="sidebar-link">
+                    <i class="fas fa-users"></i>
+                    <span>Clientes</span>
+                </a>
+                <a href="payments.html" class="sidebar-link">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span>Cobros</span>
+                </a>
+                <a href="inventory.html" class="sidebar-link active">
+                    <i class="fas fa-boxes"></i>
+                    <span>Inventario</span>
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <h4><i class="fas fa-bell"></i> Recordatorios</h4>
+                <a href="reminders.html" class="sidebar-link">
+                    <i class="fas fa-bell"></i>
+                    <span>Recordatorios</span>
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <h4><i class="fas fa-chart-line"></i> Reportes</h4>
+                <a href="reports.html" class="sidebar-link">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reportes</span>
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <h4><i class="fas fa-cog"></i> Configuración</h4>
+                <a href="#" class="sidebar-link" onclick="showUserSettings()">
+                    <i class="fas fa-user-cog"></i>
+                    <span>Perfil de Usuario</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <i class="fas fa-user-circle"></i>
+                <div>
+                    <span id="sidebarUserName">Admin</span>
+                    <small>Usuario Activo</small>
+                </div>
+            </div>
+            <button onclick="logout()" class="sidebar-logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Cerrar Sesión</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Overlay para cerrar sidebar -->
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <div class="container">
+        <div class="page-header">
+            <div class="header-left">
+                <button onclick="goBack()" class="btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </button>
+                <h2><i class="fas fa-user-tools"></i> Herramientas por Técnico</h2>
+            </div>
+            <div class="header-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchTechnicianTools" placeholder="Buscar técnico o herramienta...">
+                </div>
+                <button onclick="showAssignToolModal()" class="btn-primary">
+                    <i class="fas fa-plus"></i> Asignar Herramienta
+                </button>
+                <button onclick="exportTechnicianToolsToExcel()" class="btn-secondary">
+                    <i class="fas fa-file-excel"></i> Exportar Excel
+                </button>
+            </div>
+        </div>
+
+        <!-- Resumen de Herramientas -->
+        <div class="inventory-summary">
+            <div class="summary-card">
+                <i class="fas fa-users"></i>
+                <div>
+                    <h4>Total de Técnicos</h4>
+                    <span id="totalTechnicians">0</span>
+                    <small>Técnicos con herramientas</small>
+                </div>
+            </div>
+            <div class="summary-card">
+                <i class="fas fa-tools"></i>
+                <div>
+                    <h4>Total de Herramientas</h4>
+                    <span id="totalTools">0</span>
+                    <small>Herramientas asignadas</small>
+                </div>
+            </div>
+            <div class="summary-card">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    <h4>Pendientes de Devolución</h4>
+                    <span id="pendingReturns">0</span>
+                    <small>Herramientas por devolver</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de Técnicos con Herramientas -->
+        <div class="technicians-tools-container">
+            <div id="techniciansToolsList">
+                <!-- Se llenará dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para asignar herramienta -->
+    <div id="assignToolModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Asignar Producto/Herramienta a Técnico</h3>
+                <span class="close-btn" onclick="closeAssignToolModal()">&times;</span>
+            </div>
+            <form id="assignToolForm" class="card-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Técnico:</label>
+                        <select id="assignTechnician" required>
+                            <option value="">Seleccionar técnico</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-tools"></i> Producto/Herramienta:</label>
+                        <select id="assignTool" required>
+                            <option value="">Seleccionar producto o herramienta</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar"></i> Fecha de Asignación:</label>
+                        <input type="date" id="assignDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar-check"></i> Fecha de Devolución Esperada:</label>
+                        <input type="date" id="expectedReturnDate" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-comments"></i> Observaciones:</label>
+                    <textarea id="assignObservations" placeholder="Observaciones sobre la asignación..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i> Asignar
+                    </button>
+                    <button type="button" onclick="closeAssignToolModal()" class="btn-secondary">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para devolver herramienta -->
+    <div id="returnToolModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Devolver Herramienta</h3>
+                <span class="close-btn" onclick="closeReturnToolModal()">&times;</span>
+            </div>
+            <form id="returnToolForm" class="card-form">
+                <input type="hidden" id="returnToolId">
+                <div class="form-group">
+                    <label><i class="fas fa-calendar"></i> Fecha de Devolución:</label>
+                    <input type="date" id="returnDate" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-comments"></i> Estado de la Herramienta:</label>
+                    <select id="toolCondition" required>
+                        <option value="">Seleccionar estado</option>
+                        <option value="excelente">Excelente</option>
+                        <option value="bueno">Bueno</option>
+                        <option value="regular">Regular</option>
+                        <option value="malo">Malo</option>
+                        <option value="dañado">Dañado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-comments"></i> Observaciones:</label>
+                    <textarea id="returnObservations" placeholder="Observaciones sobre la devolución..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-check"></i> Confirmar Devolución
+                    </button>
+                    <button type="button" onclick="closeReturnToolModal()" class="btn-secondary">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/technician-tools.js"></script>
+    <script src="js/responsive.js"></script>
+    <script src="js/sidebar.js"></script>
+</body>
+</html> 

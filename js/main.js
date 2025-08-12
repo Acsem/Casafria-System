@@ -727,7 +727,7 @@ async function printOrderPDF(orderId) {
                         <tr>
                             <th>${pdfConfig.fields.model}</th>
                             <th>${pdfConfig.fields.series}</th>
-                            <th>${pdfConfig.fields.voltage}</th>
+                            <th>${pdfConfig.fields.brand}</th>
                             <th>${pdfConfig.fields.warranty}</th>
                         </tr>
                     </thead>
@@ -735,7 +735,7 @@ async function printOrderPDF(orderId) {
                         <tr>
                             <td>${order.product || '________________'}</td>
                             <td>________________</td>
-                            <td>${order.purchaseDate ? new Date(order.purchaseDate).toLocaleDateString('es-ES') : '________________'}</td>
+                            <td>${order.brand || '________________'}</td>
                             <td>
                                 <div class="compact-checkbox-group">
                                     <div class="compact-checkbox-item">
@@ -744,40 +744,6 @@ async function printOrderPDF(orderId) {
                                     </div>
                                     <div class="compact-checkbox-item">
                                         <input type="checkbox" ${order.warrantyStatus === 'Vencida' || order.warrantyStatus === 'Sin Garantía' ? 'checked' : ''}>
-                                        <span>${pdfConfig.fields.no}</span>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>________________</td>
-                            <td>________________</td>
-                            <td>________________</td>
-                            <td>
-                                <div class="compact-checkbox-group">
-                                    <div class="compact-checkbox-item">
-                                        <input type="checkbox">
-                                        <span>${pdfConfig.fields.yes}</span>
-                                    </div>
-                                    <div class="compact-checkbox-item">
-                                        <input type="checkbox">
-                                        <span>${pdfConfig.fields.no}</span>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>________________</td>
-                            <td>________________</td>
-                            <td>________________</td>
-                            <td>
-                                <div class="compact-checkbox-group">
-                                    <div class="compact-checkbox-item">
-                                        <input type="checkbox">
-                                        <span>${pdfConfig.fields.yes}</span>
-                                    </div>
-                                    <div class="compact-checkbox-item">
-                                        <input type="checkbox">
                                         <span>${pdfConfig.fields.no}</span>
                                     </div>
                                 </div>
@@ -802,38 +768,7 @@ async function printOrderPDF(orderId) {
                     </div>
                 </div>
 
-                <!-- Datos de Repuestos -->
-                <div class="section-header">${pdfConfig.sections.partsData}</div>
-                <table class="compact-table">
-                    <thead>
-                        <tr>
-                            <th>${pdfConfig.fields.partCode}</th>
-                            <th>${pdfConfig.fields.spareCode}</th>
-                            <th>${pdfConfig.fields.quantity}</th>
-                            <th>${pdfConfig.fields.spare}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>________________</td>
-                            <td>________________</td>
-                            <td>________________</td>
-                            <td>________________</td>
-                        </tr>
-                        <tr>
-                            <td>________________</td>
-                            <td>________________</td>
-                            <td>________________</td>
-                            <td>________________</td>
-                        </tr>
-                        <tr>
-                            <td>________________</td>
-                            <td>________________</td>
-                            <td>________________</td>
-                            <td>________________</td>
-                        </tr>
-                    </tbody>
-                </table>
+
 
                 <!-- Datos de Almacén y Costos -->
                 <div class="cost-summary">

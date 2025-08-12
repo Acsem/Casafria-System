@@ -129,6 +129,7 @@ body.sidebar-expanded .navbar {
     object-fit: contain;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
     transition: var(--transition);
+    padding-bottom: 0.5rem;
 }
 
 .nav-logo:hover {
@@ -220,6 +221,7 @@ body.sidebar-expanded .container {
     transition: var(--transition);
     position: relative;
     z-index: 1;
+    padding-bottom: 1rem;
 }
 
 .main-logo:hover {
@@ -4086,5 +4088,361 @@ tr:hover {
     
     .reminder-description {
         max-width: 100px;
+    }
+}
+
+@media (max-width: 480px) {
+    .reminders-summary {
+        padding: 1rem;
+    }
+    
+    .reminders-table {
+        font-size: 0.8rem;
+    }
+    
+    .reminders-table th,
+    .reminders-table td {
+        padding: 0.5rem 0.25rem;
+    }
+    
+    .reminder-description {
+        max-width: 120px;
+    }
+}
+
+/* Estilos para el modal de gestión de técnicos */
+.technicians-list {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: var(--secondary-color);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--card-border);
+}
+
+.technicians-list h4 {
+    margin: 0 0 1rem 0;
+    color: var(--text-color);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.technician-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    background: var(--background-color);
+    border: 1px solid var(--card-border);
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+}
+
+.technician-item:hover {
+    border-color: var(--accent-light);
+    box-shadow: var(--shadow);
+}
+
+.technician-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.technician-avatar {
+    width: 32px;
+    height: 32px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.technician-name {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.technician-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.technician-actions .btn-small {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+.add-technician-form {
+    padding: 1rem;
+    background: var(--secondary-color);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--card-border);
+}
+
+.add-technician-form h4 {
+    margin: 0 0 1rem 0;
+    color: var(--text-color);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.add-technician-form .form-group {
+    margin-bottom: 1rem;
+}
+
+.add-technician-form .btn-primary {
+    width: 100%;
+}
+
+/* Responsive para el modal de técnicos */
+@media (max-width: 768px) {
+    .technician-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .technician-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+    
+    .technician-actions .btn-small {
+        flex: 1;
+        text-align: center;
+    }
+}
+
+/* Estilos para la pantalla de herramientas por técnico */
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header-left .btn-secondary {
+    margin-right: 0.5rem;
+}
+
+.technicians-tools-container {
+    margin-top: 2rem;
+}
+
+.technician-card {
+    background: var(--card-color);
+    border: 1px solid var(--card-border);
+    border-radius: var(--border-radius);
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.technician-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.technician-header {
+    background: var(--gradient-primary);
+    color: white;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.technician-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.technician-info i {
+    font-size: 1.5rem;
+    opacity: 0.9;
+}
+
+.technician-info h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.tools-count {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.technician-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.tools-list {
+    padding: 1.5rem;
+}
+
+.tool-item {
+    background: var(--secondary-color);
+    border: 1px solid var(--card-border);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: var(--transition);
+}
+
+.tool-item:hover {
+    background: white;
+    box-shadow: var(--shadow);
+}
+
+.tool-item.returned {
+    background: #f0f9ff;
+    border-color: #0ea5e9;
+}
+
+.tool-item.overdue {
+    background: #fef2f2;
+    border-color: #ef4444;
+}
+
+.tool-item.active {
+    background: #f0fdf4;
+    border-color: #22c55e;
+}
+
+.tool-info {
+    flex: 1;
+}
+
+.tool-name {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.tool-name i {
+    color: var(--accent-color);
+}
+
+.tool-details {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.875rem;
+    color: var(--text-light);
+}
+
+.tool-details span {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.tool-details .overdue {
+    color: var(--danger-color);
+    font-weight: 600;
+}
+
+.tool-observations {
+    margin-top: 0.5rem;
+    font-style: italic;
+    color: var(--text-light);
+    font-size: 0.875rem;
+}
+
+.tool-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.return-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--success-color);
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: var(--card-color);
+    border: 2px dashed var(--card-border);
+    border-radius: var(--border-radius);
+    margin: 2rem 0;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-state h3 {
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+}
+
+.empty-state p {
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Responsive para herramientas por técnico */
+@media (max-width: 768px) {
+    .header-left {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .technician-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .technician-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .tool-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .tool-details {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .tool-actions {
+        width: 100%;
+        justify-content: flex-end;
     }
 }
