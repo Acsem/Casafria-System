@@ -41,9 +41,42 @@ def test():
 def home():
     return render_template('home.html')
 
+@app.route('/home.html')
+def home_html():
+    return render_template('home.html')
+
 @app.route('/dashboard')
 def dashboard():
     return render_template('home.html')
+
+# Rutas para archivos HTML estáticos
+@app.route('/orders.html')
+def orders_html():
+    return render_template('orders.html')
+
+@app.route('/inventory.html')
+def inventory_html():
+    return render_template('inventory.html')
+
+@app.route('/payments.html')
+def payments_html():
+    return render_template('payments.html')
+
+@app.route('/clients.html')
+def clients_html():
+    return render_template('clients.html')
+
+@app.route('/reports.html')
+def reports_html():
+    return render_template('reports.html')
+
+@app.route('/reminders.html')
+def reminders_html():
+    return render_template('reminders.html')
+
+@app.route('/technician-tools.html')
+def technician_tools_html():
+    return render_template('technician-tools.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
