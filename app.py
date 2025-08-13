@@ -7,7 +7,7 @@ import os
 import json
 from config import config
 from error_handlers import init_error_handlers, log_security_event, validate_input
-from forms import LoginForm, CredentialsForm, OrderForm, NoteForm
+from forms import LoginForm, OrderForm, NoteForm
 from auth_utils import login_required, get_current_user
 from backup_manager import BackupManager
 
@@ -74,10 +74,16 @@ def logout():
 
 @app.route('/api/update_credentials', methods=['POST'])
 def update_credentials():
-    form = CredentialsForm()
-    if form.validate_on_submit():
-        username = form.username.data
-        password = form.password.data
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({'success': False, 'message': 'Datos no recibidos'})
+        
+        username = data.get('username')
+        password = data.get('password')
+        
+        if not username or not password:
+            return jsonify({'success': False, 'message': 'Usuario y contraseña son requeridos'})
         
         # Validar entrada adicional
         is_valid, message = validate_input(username, 50)
@@ -94,8 +100,9 @@ def update_credentials():
         else:
             log_security_event('credentials_update_failed', f'Failed to update credentials for {username}')
             return jsonify({'success': False, 'message': 'Error al actualizar credenciales'})
-    else:
-        return jsonify({'success': False, 'message': 'Datos de entrada inválidos'})
+    except Exception as e:
+        log_security_event('credentials_update_error', f'Error updating credentials: {str(e)}')
+        return jsonify({'success': False, 'message': 'Error interno del servidor'})
 
 @app.route('/orders')
 def view_orders():
